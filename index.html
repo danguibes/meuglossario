@@ -1114,16 +1114,55 @@ Sitemap: https://exemplo.com.br/sitemap.xml</code></pre>
   <p>Lista das URLs que você quer que sejam indexadas, com data de atualização. Não garante indexação; ajuda o robô a descobrir o que existe, sobretudo em site grande ou com páginas pouco linkadas. Frameworks como o <a class="x" href="#nextjs">Next</a> geram o arquivo a partir das <a class="x" href="#rota">rotas</a>, o que evita que ele envelheça.</p>
 </article>
 
+<article class="e" id="slug" data-s="seo">
+  <h3><a class="self" href="#slug">Slug</a> <span class="t">conc.</span></h3>
+  <p>A parte legível da URL que identifica um item:</p>
+  <pre><code>/receitas/risoto-de-abobora-com-alecrim
+            └──────── o slug ────────┘</code></pre>
+  <p>Minúsculas, sem acento, sem espaço (hífen no lugar), sem caractere especial. <strong>O nome vem do jornal impresso</strong>: <em>slug</em> era o apelido curto que a redação dava a uma matéria durante a produção, antes do título definitivo.</p>
+  <ul>
+    <li>É melhor que <code>/receitas/482</code> — diz ao humano e ao buscador do que se trata antes de abrir.</li>
+    <li><strong>Uma vez indexado, mudar custa caro:</strong> links quebram e o <a class="x" href="#seo">ranqueamento</a> zera. Exige redirecionamento permanente (301) para não perder o que havia. Por isso se decide com cuidado e se congela.</li>
+    <li>Precisa ser <strong>único</strong>. Duas receitas de mesmo nome se resolvem com sufixo (<code>-2</code>) ou com slug híbrido (<code>/receitas/482-risoto-de-abobora</code>), que é legível e garantidamente único.</li>
+  </ul>
+  <p class="note">Cada âncora deste glossário (<code>#cache-busting</code>, <code>#edge-function</code>) é um slug.</p>
+</article>
+
 <article class="e" id="open-graph" data-s="seo">
   <h3><a class="self" href="#open-graph">Open Graph</a> <span class="t">pad.</span></h3>
-  <p>Conjunto de meta tags (<code>og:title</code>, <code>og:description</code>, <code>og:image</code>) que define o <strong>card</strong> exibido quando alguém compartilha o link.</p>
-  <p>Ponto crítico: os robôs de WhatsApp, Instagram, Facebook e LinkedIn <strong>não executam JavaScript</strong> — leem só o HTML que chega. Numa <a class="x" href="#spa">SPA</a>, tags injetadas por JS não existem para eles, e o link aparece sem foto nem título. Precisa estar no HTML <em>servido</em>.</p>
+  <p>Conjunto de meta tags criado pelo Facebook em 2010 e adotado por todo mundo, que define o <strong>card</strong> exibido quando alguém compartilha o link.</p>
+  <pre><code>&lt;meta property="og:title"       content="Risoto de abóbora"&gt;
+&lt;meta property="og:description" content="Pronto em 40 min, serve 4."&gt;
+&lt;meta property="og:image"       content="https://site.com.br/img/risoto.jpg"&gt;
+&lt;meta property="og:url"         content="https://site.com.br/receitas/risoto"&gt;
+&lt;meta property="og:type"        content="article"&gt;</code></pre>
+  <p>Três detalhes que fazem falhar na prática:</p>
+  <ul>
+    <li>É <code>property=</code>, <strong>não</strong> <code>name=</code>. As outras meta tags usam <code>name</code>; trocar faz várias ferramentas ignorarem em silêncio.</li>
+    <li>A imagem precisa de <strong>URL absoluta</strong> — quem lê está em outro servidor. Idealmente ~1200×630.</li>
+    <li><strong>Não podem ser injetadas por JavaScript.</strong> Os robôs de WhatsApp, Instagram, Facebook e LinkedIn não executam JS: leem o HTML servido e vão embora. Numa <a class="x" href="#spa">SPA</a>, tags adicionadas depois pelo <a class="x" href="#react">React</a> não existem para eles, e o link aparece sem foto nem título.</li>
+  </ul>
+  <p>O X/Twitter tem um conjunto próprio (<code>twitter:card</code>), mas cai nas <code>og:</code> quando elas faltam — então og primeiro.</p>
+  <p class="note">Esses serviços <strong>cacheiam o card</strong>: corrigir a tag não corrige o link já compartilhado. Cada plataforma tem um depurador para forçar a releitura. É <a class="x" href="#cdn">cache</a> outra vez, agora numa camada que não é sua.</p>
 </article>
 
 <article class="e" id="dados-estruturados" data-s="seo">
-  <h3><a class="self" href="#dados-estruturados">Dados estruturados</a> <span class="t">pad.</span></h3>
-  <p>Marcação em <a class="x" href="#json">JSON-LD</a> (vocabulário schema.org) que descreve o conteúdo de forma legível por máquina: que aquilo é uma receita, com ingredientes, tempo de preparo, porções e avaliação.</p>
-  <p>É o que produz o <em>resultado rico</em> do Google — com foto e estrelas. Depende de o HTML ser servido pronto, o que liga isso diretamente à escolha de <a class="x" href="#renderizacao">renderização</a>.</p>
+  <h3><a class="self" href="#dados-estruturados">Dados estruturados (JSON-LD)</a> <span class="t">pad.</span></h3>
+  <p>Marcação que descreve o conteúdo de forma legível por máquina: que aquilo é uma receita, com ingredientes, tempo de preparo, porções e avaliação. Vai num bloco à parte:</p>
+  <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": "Risoto de abóbora com alecrim",
+  "recipeIngredient": ["300 g de arroz arbóreo", "500 g de abóbora"],
+  "totalTime": "PT40M",
+  "recipeYield": "4 porções"
+}
+&lt;/script&gt;</code></pre>
+  <p><strong>O “LD” é de <em>Linked Data</em></strong>, dados ligados — e é a parte interessante. A web liga documentos por links, mas as <em>coisas</em> descritas neles não se ligam: meu site diz <code>"autor"</code> e o seu diz <code>"criador"</code>, e nenhuma máquina sabe que é o mesmo conceito. Linked Data resolve identificando <strong>conceitos por URL</strong> — duas páginas que apontam para a mesma definição estão falando da mesma coisa, comprovadamente. É a ideia de web semântica, de Tim Berners-Lee.</p>
+  <p>Daí as três chaves especiais: <strong><code>@context</code></strong> é o vocabulário (“quando eu disser <code>name</code>, é no sentido de schema.org”) e é o que transforma <a class="x" href="#json">JSON</a> comum em dado ligado; <strong><code>@type</code></strong> é que coisa é (<code>Recipe</code>, <code>Product</code>, <code>Organization</code>, <code>RealEstateListing</code>); <strong><code>@id</code></strong> é o identificador global, quando outras páginas precisam apontar para o item.</p>
+  <p><strong>Por que JSON-LD venceu</strong> as alternativas anteriores (microdata, RDFa): elas exigiam espalhar atributos pelo <a class="x" href="#html">HTML</a>, entrelaçando dado e marcação — mudar o layout quebrava os dados. JSON-LD é um bloco separado, independente da estrutura visual. O Google recomenda explicitamente.</p>
+  <p>O retorno é concreto: é o que produz o <strong>resultado rico</strong> — foto, estrelas, tempo de preparo —, que ocupa várias vezes mais espaço na busca que um resultado comum. Depende de o HTML ser servido pronto, o que liga isso diretamente à escolha de <a class="x" href="#renderizacao">renderização</a>.</p>
 </article>
 
 <article class="e" id="cms" data-s="seo">

@@ -1,0 +1,1192 @@
+<title>Meu Glossário</title>
+<meta name="description" content="Glossário pessoal de termos de desenvolvimento, banco de dados, infraestrutura e web.">
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --bg-card: #ffffff;
+    --bg-soft: #f2efe9;
+    --fg: #23211d;
+    --fg-soft: #6b6659;
+    --fg-faint: #8f8a7d;
+    --line: #e2ddd2;
+    --accent: #8a5a2b;
+    --accent-soft: #f0e4d4;
+    --mark: #fbe9c6;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --serif: Charter, "Bitstream Charter", "Iowan Old Style", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16151a;
+      --bg-card: #1e1d23;
+      --bg-soft: #26252c;
+      --fg: #e8e5df;
+      --fg-soft: #a5a096;
+      --fg-faint: #7d786e;
+      --line: #32313a;
+      --accent: #d9a86c;
+      --accent-soft: #3a3028;
+      --mark: #4a3c1c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16151a;
+    --bg-card: #1e1d23;
+    --bg-soft: #26252c;
+    --fg: #e8e5df;
+    --fg-soft: #a5a096;
+    --fg-faint: #7d786e;
+    --line: #32313a;
+    --accent: #d9a86c;
+    --accent-soft: #3a3028;
+    --mark: #4a3c1c;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px 100px; }
+
+  /* ---------- cabeçalho ---------- */
+  header { padding: 56px 0 24px; }
+  h1 {
+    font-size: 2.4rem; line-height: 1.1; margin: 0 0 8px;
+    letter-spacing: -0.02em; font-weight: 600;
+  }
+  .sub { color: var(--fg-soft); margin: 0 0 4px; font-size: 1.02rem; }
+  .meta { color: var(--fg-faint); font-size: .84rem; font-family: var(--mono); }
+
+  /* ---------- busca ---------- */
+  .tools {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    padding: 14px 0 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 8px;
+  }
+  .searchrow { display: flex; gap: 8px; align-items: center; }
+  #q {
+    flex: 1; min-width: 0;
+    font: inherit; font-size: 1rem;
+    padding: 10px 14px;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg-card); color: var(--fg);
+  }
+  #q:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+  #q::placeholder { color: var(--fg-faint); }
+  .btn {
+    font: inherit; font-size: .86rem; font-family: var(--mono);
+    padding: 10px 12px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg-card); color: var(--fg-soft);
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill {
+    font-family: var(--mono); font-size: .76rem;
+    padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--fg-soft);
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill[aria-pressed="true"] {
+    background: var(--accent); border-color: var(--accent);
+    color: var(--bg); font-weight: 600;
+  }
+  #count { color: var(--fg-faint); font-size: .8rem; font-family: var(--mono); margin-top: 10px; }
+
+  /* ---------- legenda ---------- */
+  .legend {
+    background: var(--bg-soft); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px 18px; margin: 22px 0 8px;
+    font-size: .88rem;
+  }
+  .legend h2 { font-size: .8rem; font-family: var(--mono); text-transform: uppercase;
+    letter-spacing: .08em; color: var(--fg-faint); margin: 0 0 10px; font-weight: 600; }
+  .legend ul { margin: 0; padding: 0; list-style: none;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 16px; }
+  .legend code { color: var(--accent); }
+  .legend p { margin: 12px 0 0; color: var(--fg-soft); font-size: .86rem; }
+
+  /* ---------- seções ---------- */
+  section { margin-top: 44px; scroll-margin-top: 90px; }
+  section > h2 {
+    font-size: 1.32rem; margin: 0 0 4px; font-weight: 600; letter-spacing: -0.01em;
+    padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+  }
+  section > .shead { color: var(--fg-soft); font-size: .92rem; margin: 10px 0 18px; }
+
+  /* ---------- verbete ---------- */
+  .e {
+    background: var(--bg-card);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 10px;
+    scroll-margin-top: 96px;
+  }
+  .e > h3 {
+    margin: 0 0 6px; font-size: 1.06rem; font-weight: 600;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  }
+  .e > h3 > a.self { color: var(--fg); text-decoration: none; }
+  .e > h3 > a.self:hover { color: var(--accent); }
+  .e > h3 > a.self::after {
+    content: " #"; color: var(--fg-faint); opacity: 0; font-family: var(--mono);
+    font-size: .8rem; font-weight: 400;
+  }
+  .e > h3 > a.self:hover::after { opacity: 1; }
+  .t {
+    font-family: var(--mono); font-size: .72rem; font-weight: 400;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .e p { margin: 0 0 8px; }
+  .e p:last-child { margin-bottom: 0; }
+  .e ul { margin: 6px 0 8px; padding-left: 20px; }
+  .e li { margin-bottom: 3px; }
+  code, .e code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--bg-soft); padding: 1px 5px; border-radius: 4px;
+  }
+  pre {
+    background: var(--bg-soft); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px; overflow-x: auto; font-family: var(--mono);
+    font-size: .82rem; line-height: 1.5; margin: 8px 0;
+  }
+  pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* link cruzado entre verbetes */
+  a.x {
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px dotted var(--accent); padding-bottom: 1px;
+  }
+  a.x:hover { border-bottom-style: solid; background: var(--accent-soft); }
+  a.ext { color: var(--accent); }
+
+  .e:target, .e.flash { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .note { color: var(--fg-soft); font-size: .9rem; }
+  .hide { display: none !important; }
+  #empty { padding: 40px 0; color: var(--fg-soft); text-align: center; }
+
+  footer {
+    margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line);
+    color: var(--fg-faint); font-size: .84rem;
+  }
+  footer a { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    header { padding-top: 32px; }
+    h1 { font-size: 1.9rem; }
+    .wrap { padding: 0 14px 60px; }
+    .e { padding: 14px 15px; }
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <h1>Meu Glossário</h1>
+  <p class="sub">Termos de desenvolvimento, banco de dados, infraestrutura e web — anotados à medida que aparecem.</p>
+  <p class="meta" id="stamp">setembro de 2026</p>
+</header>
+
+<div class="tools">
+  <div class="searchrow">
+    <input id="q" type="search" placeholder="Buscar verbete…  (tecle /)" autocomplete="off" spellcheck="false">
+    <button class="btn" id="theme" title="Alternar tema">◐</button>
+  </div>
+  <div class="pills" id="pills"></div>
+  <div id="count"></div>
+</div>
+
+<div class="legend">
+  <h2>Classe do verbete</h2>
+  <ul>
+    <li><code>ling.</code> linguagem</li>
+    <li><code>fram.</code> framework ou biblioteca</li>
+    <li><code>ferr.</code> ferramenta</li>
+    <li><code>cmd.</code> comando</li>
+    <li><code>form.</code> formato</li>
+    <li><code>arq.</code> arquivo</li>
+    <li><code>prot.</code> protocolo</li>
+    <li><code>serv.</code> serviço ou plataforma</li>
+    <li><code>conc.</code> conceito</li>
+    <li><code>prát.</code> prática</li>
+    <li><code>pad.</code> padrão ou norma</li>
+  </ul>
+  <p>Termos <a class="x" href="#repo">sublinhados em pontilhado</a> levam ao próprio verbete.</p>
+</div>
+
+<div id="empty" class="hide">Nenhum verbete encontrado.</div>
+
+<!-- ============================================================ -->
+<section id="s-git" data-s="git">
+<h2>1. Versionamento</h2>
+<p class="shead">Como o código guarda memória de si mesmo.</p>
+
+<article class="e" id="git" data-s="git">
+  <h3><a class="self" href="#git">Git</a> <span class="t">ferr.</span></h3>
+  <p>Sistema de controle de versão. Não guarda “o arquivo atual”: guarda uma sequência de fotos do projeto inteiro (<a class="x" href="#commit">commits</a>), cada uma apontando para a anterior. Disso vêm três capacidades — histórico (“o que essa linha era em agosto?”), reversão e ramificação (<a class="x" href="#branch">branch</a>).</p>
+  <p class="note">Git é a ferramenta; <a class="x" href="#github">GitHub</a> é um site que hospeda repositórios Git. Dá para usar Git a vida inteira sem GitHub.</p>
+</article>
+
+<article class="e" id="repo" data-s="git">
+  <h3><a class="self" href="#repo">Repo</a> <span class="t">conc.</span></h3>
+  <p>Abreviação de <em>repositório</em>: a pasta de um projeto sob <a class="x" href="#git">Git</a>. Contém os arquivos <em>e</em> o histórico — quem mudou o quê, quando, e o <a class="x" href="#diff">diff</a>. “Repo local” existe só na máquina; “com <a class="x" href="#remote">remote</a>” é espelhado num servidor.</p>
+</article>
+
+<article class="e" id="commit" data-s="git">
+  <h3><a class="self" href="#commit">Commit</a> <span class="t">conc.</span></h3>
+  <p>Uma foto do projeto num instante, com mensagem explicando a mudança. É a unidade do histórico: tudo em <a class="x" href="#git">Git</a> — reverter, comparar, ramificar — opera sobre commits.</p>
+</article>
+
+<article class="e" id="branch" data-s="git">
+  <h3><a class="self" href="#branch">Branch</a> <span class="t">conc.</span></h3>
+  <p>Uma linha paralela de <a class="x" href="#commit">commits</a>. Serve para trabalhar numa versão alternativa sem afetar a principal (<code>main</code>). Juntar de volta é o <a class="x" href="#merge">merge</a>.</p>
+</article>
+
+<article class="e" id="merge" data-s="git">
+  <h3><a class="self" href="#merge">Merge</a> <span class="t">conc.</span></h3>
+  <p>Juntar uma <a class="x" href="#branch">branch</a> na outra. Quando as duas mexeram nas mesmas linhas, dá <em>conflito</em>: o Git para e pede que um humano decida qual versão fica.</p>
+</article>
+
+<article class="e" id="remote" data-s="git">
+  <h3><a class="self" href="#remote">Remote</a> <span class="t">conc.</span></h3>
+  <p>Uma cópia do <a class="x" href="#repo">repo</a> em outro lugar — tipicamente no <a class="x" href="#github">GitHub</a>. <code>push</code> manda os <a class="x" href="#commit">commits</a> locais para lá; <code>pull</code> traz os de lá para cá.</p>
+</article>
+
+<article class="e" id="diff" data-s="git">
+  <h3><a class="self" href="#diff">Diff</a> <span class="t">conc.</span></h3>
+  <p>A diferença entre duas versões de um arquivo, linha a linha: <code>-</code> o que saiu, <code>+</code> o que entrou.</p>
+  <pre><code>- const limite = 100;
++ const limite = 250;</code></pre>
+  <p>É a razão prática de ter <a class="x" href="#repo">repo</a> mesmo sem <a class="x" href="#github">GitHub</a>: sem diff, “o que eu mudei ontem?” não tem resposta.</p>
+</article>
+
+<article class="e" id="github" data-s="git">
+  <h3><a class="self" href="#github">GitHub</a> <span class="t">serv.</span></h3>
+  <p>Site que hospeda repositórios <a class="x" href="#git">Git</a> e acrescenta trabalho em equipe: <em>pull requests</em> (propor e revisar mudanças antes do <a class="x" href="#merge">merge</a>), <em>issues</em>, automação e <a class="x" href="#github-pages">GitHub Pages</a>. Concorrentes: GitLab, Bitbucket, Codeberg.</p>
+</article>
+
+<article class="e" id="gitignore" data-s="git">
+  <h3><a class="self" href="#gitignore">.gitignore</a> <span class="t">arq.</span></h3>
+  <p>Lista de padrões dizendo ao <a class="x" href="#git">Git</a> o que <strong>não</strong> versionar.</p>
+  <pre><code>node_modules/
+dist/
+.env
+!.env.example</code></pre>
+  <p>Fica de fora o que é <strong>regenerável</strong> (<a class="x" href="#node-modules">node_modules/</a>, <a class="x" href="#dist">dist/</a>), o que é <strong>segredo</strong> (<a class="x" href="#env">.env</a>) e o que é <strong>lixo do sistema</strong> (<a class="x" href="#thumbs-db">Thumbs.db</a>).</p>
+  <p>Três armadilhas: <strong>(1)</strong> ignorar não apaga o que já foi commitado — chave que entrou no histórico se <em>rotaciona</em>, não se esconde; <strong>(2)</strong> <code>!</code> nega um padrão, mas um <code>.gitignore</code> mais profundo vence a negação da raiz; <strong>(3)</strong> vale conferir nas duas direções — o que não pode entrar, e o que <em>precisa</em> entrar e não está.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-cli" data-s="cli">
+<h2>2. Terminal e linha de comando</h2>
+<p class="shead">Falar com a máquina digitando — o que é scriptável e repetível.</p>
+
+<article class="e" id="cli" data-s="cli">
+  <h3><a class="self" href="#cli">CLI</a> <span class="t">conc.</span></h3>
+  <p><em>Command Line Interface</em>: programa que se opera digitando comandos. <code>git</code>, <code>npm</code>, <code>curl</code>. A vantagem sobre a <a class="x" href="#gui">GUI</a> é ser automatizável — o que você faz uma vez, você repete mil.</p>
+</article>
+
+<article class="e" id="gui" data-s="cli">
+  <h3><a class="self" href="#gui">GUI</a> <span class="t">conc.</span></h3>
+  <p><em>Graphical User Interface</em>: a versão com janelas e botões. O painel de um serviço é GUI; o comando equivalente é <a class="x" href="#cli">CLI</a>. Quase toda ferramenta séria tem as duas, e a CLI costuma receber as novidades primeiro.</p>
+</article>
+
+<article class="e" id="shell" data-s="cli">
+  <h3><a class="self" href="#shell">Shell</a> <span class="t">ferr.</span></h3>
+  <p>O programa que lê o que você digita no terminal e executa. O <strong>terminal</strong> é a janela; o <strong>shell</strong> é quem interpreta lá dentro. <a class="x" href="#bash">Bash</a>, zsh e PowerShell são shells diferentes, com sintaxes diferentes.</p>
+  <p>O que o torna mais que um lançador de programas é o <a class="x" href="#pipe">pipe</a> — por isso os comandos são pequenos e combináveis.</p>
+</article>
+
+<article class="e" id="bash" data-s="cli">
+  <h3><a class="self" href="#bash">Bash</a> <span class="t">ling.</span></h3>
+  <p>O <a class="x" href="#shell">shell</a> padrão de Linux e Mac, e também uma linguagem de script (arquivos <code>.sh</code>). No Windows o equivalente nativo é o PowerShell, que faz o mesmo com outra sintaxe. Importa porque quase toda documentação e toda automação assumem Bash.</p>
+</article>
+
+<article class="e" id="pipe" data-s="cli">
+  <h3><a class="self" href="#pipe">Pipe</a> <span class="t">conc.</span></h3>
+  <p>O operador <code>|</code>: a saída de um comando vira a entrada do próximo.</p>
+  <pre><code>cat vendas.csv | grep "2026-09" | wc -l</code></pre>
+  <p>“Leia o arquivo → fique só com as linhas de setembro → conte quantas são.” É a ideia central do <a class="x" href="#shell">shell</a>: ferramentas pequenas, encadeadas.</p>
+</article>
+
+<article class="e" id="ls" data-s="cli">
+  <h3><a class="self" href="#ls">ls</a> <span class="t">cmd.</span></h3>
+  <p>Lista os arquivos da pasta. Em PowerShell, <code>Get-ChildItem</code> — que também atende por <code>ls</code>.</p>
+</article>
+
+<article class="e" id="cat" data-s="cli">
+  <h3><a class="self" href="#cat">cat</a> <span class="t">cmd.</span></h3>
+  <p>Despeja o conteúdo de um arquivo na tela. O nome vem de <em>concatenate</em>, porque também junta vários. Em PowerShell, <code>Get-Content</code>.</p>
+</article>
+
+<article class="e" id="grep" data-s="cli">
+  <h3><a class="self" href="#grep">grep</a> <span class="t">cmd.</span></h3>
+  <p>Filtra linhas que casam com um padrão. É o comando que responde “onde no código isso é usado?” em um segundo:</p>
+  <pre><code>grep -rn "STRIPE_SECRET_KEY" src/</code></pre>
+  <p>O nome vem de <code>g/re/p</code>, um comando do editor <code>ed</code> — <em>globally search a regular expression and print</em>. Aceita <a class="x" href="#regex">regex</a>. Em PowerShell, <code>Select-String</code>.</p>
+</article>
+
+<article class="e" id="regex" data-s="cli">
+  <h3><a class="self" href="#regex">Regex</a> <span class="t">ling.</span></h3>
+  <p><em>Expressão regular</em>: um mini-idioma para descrever padrões de texto. <code>^\d{3}\.\d{3}</code> descreve “começa com três dígitos, ponto, três dígitos”. Aparece em <a class="x" href="#grep">grep</a>, em todo editor e em praticamente toda linguagem. Um dos investimentos de melhor retorno por hora estudada.</p>
+</article>
+
+<article class="e" id="curl" data-s="cli">
+  <h3><a class="self" href="#curl">curl</a> <span class="t">cmd.</span></h3>
+  <p>Faz uma requisição <a class="x" href="#http">HTTP</a> e imprime a resposta. É o navegador sem navegador — e, por isso, a forma mais honesta de medir a web: mostra o que chegou <em>antes</em> de qualquer <a class="x" href="#javascript">JavaScript</a> rodar.</p>
+  <ul>
+    <li><code>-s</code> silencia a barra de progresso</li>
+    <li><code>-L</code> segue redirecionamentos</li>
+    <li><code>-I</code> mostra só os cabeçalhos</li>
+    <li><code>-H</code> envia um cabeçalho</li>
+    <li><code>-A</code> finge ser outro cliente (<a class="x" href="#user-agent">User-Agent</a>)</li>
+  </ul>
+</article>
+
+<article class="e" id="cron" data-s="cli">
+  <h3><a class="self" href="#cron">Cron</a> <span class="t">ferr.</span></h3>
+  <p>Agendador de tarefas, e por extensão a sintaxe dele: cinco campos — minuto, hora, dia, mês, dia da semana. <code>0 3 * * *</code> é “todo dia às 3h”.</p>
+  <p>Ponto importante: um cron que dispara uma função <a class="x" href="#serverless">serverless</a> não contradiz o modelo dela. O relógio está <strong>fora</strong>; para a função, é uma requisição como outra qualquer. Veja <a class="x" href="#stateless">stateless</a>.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-ling" data-s="ling">
+<h2>3. Linguagens, módulos e pacotes</h2>
+<p class="shead">Em que se escreve, e como um arquivo usa o outro.</p>
+
+<article class="e" id="javascript" data-s="ling">
+  <h3><a class="self" href="#javascript">JavaScript</a> <span class="t">ling.</span></h3>
+  <p>A única linguagem que o navegador executa nativamente — acidente histórico, não escolha de engenharia, mas um fato duro: comportamento que precisa acontecer na máquina do usuário acaba em JS. Com o <a class="x" href="#node">Node.js</a> ela também roda no servidor, onde não tem vantagem nenhuma sobre Python, Go ou C# além da conveniência de ser a mesma dos dois lados.</p>
+</article>
+
+<article class="e" id="typescript" data-s="ling">
+  <h3><a class="self" href="#typescript">TypeScript / .ts</a> <span class="t">ling.</span></h3>
+  <p><a class="x" href="#javascript">JavaScript</a> com <strong>tipos</strong>: você declara que <code>valor</code> é número, e o editor reclama antes de rodar. Os tipos somem no <a class="x" href="#build">build</a> — o que roda é JS puro. Ver <a class="x" href="#type-checker">type checker</a>.</p>
+</article>
+
+<article class="e" id="tsx" data-s="ling">
+  <h3><a class="self" href="#tsx">.tsx</a> <span class="t">arq.</span></h3>
+  <p><a class="x" href="#typescript">TypeScript</a> com <a class="x" href="#jsx">JSX</a> permitido dentro. Regra prática: arquivo que desenha tela é <code>.tsx</code>; arquivo de lógica pura é <code>.ts</code>.</p>
+</article>
+
+<article class="e" id="mjs" data-s="ling">
+  <h3><a class="self" href="#mjs">.mjs</a> <span class="t">arq.</span></h3>
+  <p><a class="x" href="#javascript">JavaScript</a> marcado explicitamente como módulo <a class="x" href="#esm">ESM</a>. Existe porque o <a class="x" href="#node">Node</a> convive com dois sistemas de módulo, e a extensão vence a configuração do projeto. Por isso um <code>vite.config.mjs</code> funciona em qualquer lugar. O oposto é <code>.cjs</code>, sempre <a class="x" href="#commonjs">CommonJS</a>.</p>
+</article>
+
+<article class="e" id="esm" data-s="ling">
+  <h3><a class="self" href="#esm">ESM</a> <span class="t">pad.</span></h3>
+  <p><em>ECMAScript Modules</em>: o padrão oficial da linguagem para um arquivo usar outro, e o único que o navegador entende nativamente.</p>
+  <pre><code>import fs from 'fs';
+export { minhaFuncao };</code></pre>
+  <p>A diferença que importa em relação ao <a class="x" href="#commonjs">CommonJS</a> não é a escrita, é <strong>quando</strong>: <code>import</code> é estático — as dependências são declaradas no topo e podem ser conhecidas antes de rodar. É isso que torna o <a class="x" href="#tree-shaking">tree-shaking</a> possível.</p>
+</article>
+
+<article class="e" id="commonjs" data-s="ling">
+  <h3><a class="self" href="#commonjs">CommonJS</a> <span class="t">pad.</span></h3>
+  <p>O sistema de módulos antigo do <a class="x" href="#node">Node</a> (2009): <code>require()</code> e <code>module.exports</code>. Como <code>require</code> é uma chamada de função comum, pode estar dentro de um <code>if</code> e ter o caminho montado em tempo de execução — flexível, e por isso não analisável estaticamente.</p>
+  <p>Hoje escreva <a class="x" href="#esm">ESM</a>. CommonJS aparece em código legado e em erros como <em>“require is not defined in ES module scope”</em>, que é sempre essa fronteira sendo cruzada.</p>
+</article>
+
+<article class="e" id="node" data-s="ling">
+  <h3><a class="self" href="#node">Node.js</a> <span class="t">ferr.</span></h3>
+  <p>O motor que roda <a class="x" href="#javascript">JavaScript</a> <strong>fora</strong> do navegador. É o que permite JS no servidor, e é o que executa <a class="x" href="#npm">npm</a>, o <a class="x" href="#build">build</a> do <a class="x" href="#vite">Vite</a> e o <a class="x" href="#nextjs">Next.js</a>. Quando um projeto pede “Node 20”, é a versão desse motor.</p>
+</article>
+
+<article class="e" id="npm" data-s="ling">
+  <h3><a class="self" href="#npm">npm</a> <span class="t">ferr.</span></h3>
+  <p><em>Node Package Manager.</em> Faz duas coisas: <strong>instala dependências</strong> (<code>npm install react</code> baixa e anota no <code>package.json</code>) e <strong>roda scripts</strong> (<code>npm run dev</code>, <code>npm run build</code>).</p>
+  <p>O <code>package-lock.json</code> fixa as versões exatas que funcionaram, e <strong>entra</strong> no <a class="x" href="#repo">repo</a>. Alternativas com o mesmo papel: pnpm, yarn, bun.</p>
+</article>
+
+<article class="e" id="node-modules" data-s="ling">
+  <h3><a class="self" href="#node-modules">node_modules/</a> <span class="t">arq.</span></h3>
+  <p>A pasta onde o <a class="x" href="#npm">npm</a> despeja o código baixado das dependências. Enorme e inteiramente regenerável a partir do <code>package.json</code> — por isso vai no <a class="x" href="#gitignore">.gitignore</a> e nunca entra no <a class="x" href="#repo">repo</a>.</p>
+</article>
+
+<article class="e" id="php" data-s="ling">
+  <h3><a class="self" href="#php">PHP</a> <span class="t">ling.</span></h3>
+  <p>Linguagem de servidor, de 1995. Roda no servidor e gera o <a class="x" href="#html">HTML</a> que vai ao navegador. Importa por um motivo: <a class="x" href="#wordpress">WordPress</a> é PHP, e por isso exige hospedagem tradicional com banco e disco.</p>
+  <p>O modelo clássico é o oposto do stack moderno — cada requisição executa o arquivo do zero e devolve a página pronta, sem <a class="x" href="#build">build</a> e sem front separado. Carrega má fama das versões antigas; o PHP 8 é rápido, e o Laravel é um framework bem resolvido.</p>
+</article>
+
+<article class="e" id="sql" data-s="ling">
+  <h3><a class="self" href="#sql">SQL</a> <span class="t">ling.</span></h3>
+  <p>A linguagem dos bancos relacionais: você descreve <em>qual</em> resultado quer, e o banco decide como obtê-lo (é <a class="x" href="#declarativo">declarativa</a>). Todo <a class="x" href="#postgres">Postgres</a> — tabelas, políticas de acesso, funções, gatilhos — é SQL.</p>
+</article>
+
+<article class="e" id="wasm" data-s="ling">
+  <h3><a class="self" href="#wasm">WebAssembly</a> <span class="t">pad.</span></h3>
+  <p>Formato binário que permite rodar no navegador código compilado de Rust, C++ ou Go, com desempenho perto do nativo. Usado no que é pesado: edição de vídeo, jogos, planilhas, Figma.</p>
+  <p>Não substitui o <a class="x" href="#javascript">JavaScript</a>: não toca o <a class="x" href="#dom">DOM</a> diretamente, e precisa de JS para isso. É um motor, não uma alternativa.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-web" data-s="web">
+<h2>4. A página no navegador</h2>
+<p class="shead">As três camadas — e o erro de tratá-las como alternativas.</p>
+
+<article class="e" id="html" data-s="web">
+  <h3><a class="self" href="#html">HTML</a> <span class="t">ling.</span></h3>
+  <p>A camada de <strong>estrutura e conteúdo</strong>: “isto é um título, isto é um parágrafo, isto é um campo de e-mail”. É o que <em>existe</em>.</p>
+  <p>Não é alternativa ao <a class="x" href="#css">CSS</a> nem ao <a class="x" href="#javascript">JavaScript</a> — são três camadas da mesma página. Sem HTML não há página; uma página só com HTML funciona, feia.</p>
+</article>
+
+<article class="e" id="css" data-s="web">
+  <h3><a class="self" href="#css">CSS</a> <span class="t">ling.</span></h3>
+  <p>A camada de <strong>aparência</strong>: cor, tamanho, posição, espaçamento, o que muda no celular, o tema escuro. É como aquilo <em>se parece</em>.</p>
+  <p>Muita coisa que se fazia com <a class="x" href="#javascript">JS</a> hoje é CSS — menu, animação, layout responsivo. Sendo <a class="x" href="#declarativo">declarativo</a> e executado pelo motor do navegador, é mais rápido e quebra menos que o equivalente em script.</p>
+</article>
+
+<article class="e" id="box-model" data-s="web">
+  <h3><a class="self" href="#box-model">Box model (padding, margin)</a> <span class="t">conc.</span></h3>
+  <p>Em <a class="x" href="#css">CSS</a>, todo elemento é uma caixa com quatro anéis: conteúdo, <strong>padding</strong>, borda e <strong>margin</strong>.</p>
+  <ul>
+    <li><strong>padding</strong> — espaço por <em>dentro</em> da borda. É o que dá respiro a um botão.</li>
+    <li><strong>margin</strong> — espaço por <em>fora</em>. Afasta o elemento dos vizinhos.</li>
+  </ul>
+  <p>Quase todo layout torto é um destes trocado pelo outro. No <a class="x" href="#tailwind">Tailwind</a>: <code>p-6</code> é padding, <code>m-6</code> é margin.</p>
+  <p class="note">A palavra <em>padding</em> também existe em criptografia, com sentido não relacionado: completar um bloco até o tamanho exigido pelo algoritmo.</p>
+</article>
+
+<article class="e" id="dom" data-s="web">
+  <h3><a class="self" href="#dom">DOM</a> <span class="t">conc.</span></h3>
+  <p><em>Document Object Model</em>: a representação do <a class="x" href="#html">HTML</a> <strong>em memória</strong>, como árvore de objetos que o <a class="x" href="#javascript">JavaScript</a> lê e modifica. O arquivo HTML é texto; ao carregá-lo, o navegador o <a class="x" href="#parser">parseia</a> e constrói o DOM.</p>
+  <p><strong>O DOM é a página.</strong> Mudou o DOM, a tela muda na hora — o arquivo original não é consultado de novo. Daí “ver código-fonte” mostrar uma coisa e o inspetor mostrar outra.</p>
+  <p>Três consequências: é por aí que o <a class="x" href="#react">React</a> trabalha; é por isso que <a class="x" href="#csr">CSR</a> atrapalha o <a class="x" href="#seo">SEO</a>; e é por isso que dá <code>window is not defined</code> no servidor, onde não há navegador nem DOM.</p>
+</article>
+
+<article class="e" id="jsx" data-s="web">
+  <h3><a class="self" href="#jsx">JSX</a> <span class="t">ling.</span></h3>
+  <p>Sintaxe que deixa escrever um pedaço de tela parecido com <a class="x" href="#html">HTML</a> <em>dentro</em> do <a class="x" href="#javascript">JavaScript</a>:</p>
+  <pre><code>function Saudacao({ nome }) {
+  return &lt;h1&gt;Olá, {nome}&lt;/h1&gt;;
+}</code></pre>
+  <p>O navegador não entende: o <a class="x" href="#build">build</a> converte para chamadas de função comuns. É açúcar sintático, e as chaves <code>{}</code> são a fronteira — dentro delas é JavaScript de verdade. Daí a extensão <a class="x" href="#tsx">.tsx</a>.</p>
+</article>
+
+<article class="e" id="react" data-s="web">
+  <h3><a class="self" href="#react">React</a> <span class="t">fram.</span></h3>
+  <p>Biblioteca de interface. Em vez de mandar o navegador “mude este texto, esconda aquele botão”, você <strong>descreve como a tela deve ser dado o estado atual</strong>:</p>
+  <pre><code>tela = f(estado)</code></pre>
+  <p>Mudou o estado, o React recalcula e aplica só a diferença no <a class="x" href="#dom">DOM</a> — comparando com uma cópia leve da árvore, o <em>virtual DOM</em>. Você para de manipular a tela e passa a manipular dados. A unidade é o <strong>componente</strong>: uma função que devolve um pedaço de tela, com estado próprio. Ver <a class="x" href="#hook">hook</a> e <a class="x" href="#declarativo">declarativo</a>.</p>
+</article>
+
+<article class="e" id="spa" data-s="web">
+  <h3><a class="self" href="#spa">SPA</a> <span class="t">conc.</span></h3>
+  <p><em>Single-Page Application.</em> Depois da primeira carga, navegar entre telas não recarrega a página — o <a class="x" href="#javascript">JavaScript</a> troca o conteúdo na hora. Navegação instantânea, ao custo de precisar reconstruir à mão o que o navegador dava de graça: <a class="x" href="#rota">rotas</a>, botão de voltar, recarregar sem perder o lugar, e <a class="x" href="#seo">SEO</a>.</p>
+</article>
+
+<article class="e" id="declarativo" data-s="web">
+  <h3><a class="self" href="#declarativo">Imperativo × declarativo</a> <span class="t">conc.</span></h3>
+  <p>“Pegue o rótulo e mude o texto” é <strong>imperativo</strong> — você dá os passos. “O rótulo mostra o nome do usuário” é <strong>declarativo</strong> — você descreve o resultado e o sistema descobre os passos.</p>
+  <p>A indústria inteira foi do primeiro para o segundo: <a class="x" href="#react">React</a>, SwiftUI e Jetpack Compose são o mesmo movimento em três plataformas, e <a class="x" href="#css">CSS</a> e <a class="x" href="#sql">SQL</a> já eram declarativos. É a distinção conceitual que mais se reaproveita.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-build" data-s="build">
+<h2>5. Build e ferramentas de projeto</h2>
+<p class="shead">Do código que você escreve ao pacote que de fato roda.</p>
+
+<article class="e" id="build" data-s="build">
+  <h3><a class="self" href="#build">Build</a> <span class="t">conc.</span></h3>
+  <p>A etapa que transforma o código que você escreve no pacote que roda. Existe porque os dois são diferentes: você escreve para ser legível; o navegador quer algo pequeno e em <a class="x" href="#javascript">JavaScript</a> puro. Em ordem:</p>
+  <ul>
+    <li><a class="x" href="#transpilar">transpilar</a> — <a class="x" href="#tsx">.tsx</a> vira <code>.js</code>, <a class="x" href="#jsx">JSX</a> vira chamada de função</li>
+    <li>resolver dependências — seguir cada <code>import</code> e montar o grafo</li>
+    <li><a class="x" href="#bundle">empacotar</a> e <a class="x" href="#tree-shaking">tree-shaking</a></li>
+    <li><a class="x" href="#minificar">minificar</a></li>
+    <li>processar ativos — <a class="x" href="#tailwind">Tailwind</a> gera aqui só as classes usadas; imagens são otimizadas; nomes ganham <a class="x" href="#cache-busting">hash</a></li>
+    <li>escrever a saída em <a class="x" href="#dist">dist/</a></li>
+  </ul>
+  <p>Um projeto <strong>sem build</strong> é aquele em que o arquivo que você escreve já é o arquivo que roda. Não confundir com <a class="x" href="#deploy">deploy</a>, que é publicar o resultado.</p>
+</article>
+
+<article class="e" id="transpilar" data-s="build">
+  <h3><a class="self" href="#transpilar">Transpilar</a> <span class="t">conc.</span></h3>
+  <p>Traduzir entre duas linguagens de alto nível — <a class="x" href="#typescript">TypeScript</a> para <a class="x" href="#javascript">JavaScript</a>, sintaxe nova para sintaxe compatível. Diferente de <strong>compilar</strong>, que traduz para linguagem de máquina (C, Rust, Go). O <a class="x" href="#build">build</a> da web transpila; não compila nesse sentido.</p>
+</article>
+
+<article class="e" id="bundle" data-s="build">
+  <h3><a class="self" href="#bundle">Bundle</a> <span class="t">conc.</span></h3>
+  <p>Juntar milhares de arquivos-fonte em poucos arquivos de saída, porque cada arquivo seria uma ida à rede. O resultado é o que o usuário baixa — daí “o bundle está grande” ser uma queixa de desempenho.</p>
+</article>
+
+<article class="e" id="tree-shaking" data-s="build">
+  <h3><a class="self" href="#tree-shaking">Tree-shaking</a> <span class="t">conc.</span></h3>
+  <p>“Sacudir a árvore”: descartar do <a class="x" href="#bundle">bundle</a> o código importado e não usado. Só é possível porque <a class="x" href="#esm">ESM</a> é estático — a ferramenta sabe, lendo o arquivo, o que é de fato usado.</p>
+</article>
+
+<article class="e" id="minificar" data-s="build">
+  <h3><a class="self" href="#minificar">Minificar</a> <span class="t">conc.</span></h3>
+  <p>Apagar espaços e comentários e encurtar nomes internos, deixando o comportamento igual. Reduz o que trafega; torna o resultado ilegível para humanos, o que é irrelevante porque ninguém lê o <a class="x" href="#dist">dist/</a>.</p>
+</article>
+
+<article class="e" id="dist" data-s="build">
+  <h3><a class="self" href="#dist">dist/</a> <span class="t">arq.</span></h3>
+  <p>De <em>distribution</em>: a pasta onde o <a class="x" href="#build">build</a> cospe o resultado pronto. Alguns projetos chamam de <code>build/</code>; o <a class="x" href="#nextjs">Next</a> usa <code>.next/</code>. Três regras: <strong>ninguém edita</strong> (é gerada), <strong>não entra no <a class="x" href="#repo">repo</a></strong>, e <strong>é o que vai para a hospedagem</strong>.</p>
+</article>
+
+<article class="e" id="vite" data-s="build">
+  <h3><a class="self" href="#vite">Vite</a> <span class="t">ferr.</span></h3>
+  <p>Duas ferramentas num pacote. Em desenvolvimento sobe um servidor local com <a class="x" href="#hmr">HMR</a>; em produção faz o <a class="x" href="#build">build</a> e produz o <a class="x" href="#dist">dist/</a>. Um app Vite + <a class="x" href="#react">React</a> é servido como arquivos estáticos e renderizado no navegador (<a class="x" href="#csr">CSR</a>).</p>
+</article>
+
+<article class="e" id="hmr" data-s="build">
+  <h3><a class="self" href="#hmr">HMR</a> <span class="t">conc.</span></h3>
+  <p><em>Hot Module Replacement</em>: você salva o arquivo e a tela atualiza só aquele pedaço, sem recarregar e sem perder o estado da aplicação. É o que torna o desenvolvimento em <a class="x" href="#vite">Vite</a> ou <a class="x" href="#nextjs">Next</a> tolerável.</p>
+</article>
+
+<article class="e" id="cache-busting" data-s="build">
+  <h3><a class="self" href="#cache-busting">Cache busting</a> <span class="t">prát.</span></h3>
+  <p>Pôr um hash no nome do arquivo gerado (<code>index-a3f9c1.js</code>) para que conteúdo novo produza nome novo. Assim o navegador pode guardar o arquivo para sempre sem risco. Sem isso, você publica a correção e o usuário continua vendo a versão velha — um clássico de <a class="x" href="#deploy">deploy</a>.</p>
+</article>
+
+<article class="e" id="tailwind" data-s="build">
+  <h3><a class="self" href="#tailwind">Tailwind CSS</a> <span class="t">fram.</span></h3>
+  <p>Framework de <a class="x" href="#css">CSS</a> <strong>utilitário</strong>: em vez de escrever regras num arquivo à parte, você compõe a aparência com classes pequenas e de propósito único, direto no elemento.</p>
+  <pre><code>&lt;div class="flex items-center gap-4 rounded-lg p-6 dark:bg-slate-800"&gt;</code></pre>
+  <p><strong>Ganha:</strong> não inventa nomes (metade do trabalho de CSS), vê a aparência sem trocar de arquivo, valores vindos de uma escala fixa, e o CSS final é minúsculo porque o <a class="x" href="#build">build</a> gera só o que foi usado. <strong>Perde:</strong> o <a class="x" href="#html">HTML</a> fica verborrágico, e mudança global depende de disciplina ou de script.</p>
+</article>
+
+<article class="e" id="lint" data-s="build">
+  <h3><a class="self" href="#lint">Lint / ESLint</a> <span class="t">ferr.</span></h3>
+  <p>Programa que lê o código <strong>sem executá-lo</strong> e aponta problemas — o nome vem de <em>lint</em>, a fiapagem da roupa. Pega erro provável (variável não usada, <code>await</code> esquecido, <a class="x" href="#hook">hook</a> dentro de um <code>if</code>), estilo, e regras próprias do projeto. Em JS/TS o padrão é o ESLint.</p>
+</article>
+
+<article class="e" id="prettier" data-s="build">
+  <h3><a class="self" href="#prettier">Formatter / Prettier</a> <span class="t">ferr.</span></h3>
+  <p>Não opina sobre correção: só reescreve o layout do código segundo uma regra fixa. Acaba com discussão de estilo, e ninguém indenta à mão. Vizinho do <a class="x" href="#lint">lint</a>, com papel diferente.</p>
+</article>
+
+<article class="e" id="type-checker" data-s="build">
+  <h3><a class="self" href="#type-checker">Type checker</a> <span class="t">ferr.</span></h3>
+  <p>Verifica se os tipos batem (<code>tsc</code>, do <a class="x" href="#typescript">TypeScript</a>). É mais fundo que <a class="x" href="#lint">lint</a>, e é a razão principal de usar TypeScript. Junto com lint e formatter, forma a <strong>análise estática</strong> — encontrar problema antes de rodar. O <a class="x" href="#smoke-test">teste</a> é o complemento que só pega o que aparece rodando.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-render" data-s="render">
+<h2>6. Renderização e rotas</h2>
+<p class="shead">Onde e quando o HTML nasce — o eixo que decide desempenho e SEO.</p>
+
+<article class="e" id="renderizacao" data-s="render">
+  <h3><a class="self" href="#renderizacao">Renderização</a> <span class="t">conc.</span></h3>
+  <p>Transformar dados e código em <a class="x" href="#html">HTML</a> pronto para exibir. Isso <strong>sempre acontece</strong>; a pergunta é onde e quando — <a class="x" href="#ssg">SSG</a>, <a class="x" href="#ssr">SSR</a> ou <a class="x" href="#csr">CSR</a>.</p>
+  <p>“Estático” descreve o primeiro caso (o HTML já existia antes de alguém pedir). O oposto de estático é <strong>dinâmico</strong>, não “renderizado”. E um mesmo projeto <a class="x" href="#nextjs">Next.js</a> mistura os três, <strong>página a página</strong>.</p>
+  <p class="note">A regra por trás: renderizar cedo é mais rápido e barato; renderizar tarde é mais fresco e personalizado. Empurre para o build tudo que for igual para todo mundo.</p>
+</article>
+
+<article class="e" id="csr" data-s="render">
+  <h3><a class="self" href="#csr">CSR</a> <span class="t">conc.</span></h3>
+  <p><em>Client-Side Rendering.</em> O servidor manda um HTML praticamente vazio (<code>&lt;div id="root"&gt;&lt;/div&gt;</code>) mais um <a class="x" href="#bundle">bundle</a>; o navegador executa, busca os dados e desenha. É o modelo do <a class="x" href="#vite">Vite</a> + <a class="x" href="#react">React</a>, e produz uma <a class="x" href="#spa">SPA</a>.</p>
+  <p>Note que os <em>arquivos</em> continuam estáticos — o que é dinâmico é o conteúdo. Custo: primeira tela em branco, <a class="x" href="#seo">SEO</a> prejudicado e <a class="x" href="#open-graph">cards de compartilhamento</a> vazios.</p>
+</article>
+
+<article class="e" id="ssr" data-s="render">
+  <h3><a class="self" href="#ssr">SSR</a> <span class="t">conc.</span></h3>
+  <p><em>Server-Side Rendering.</em> O servidor executa o <a class="x" href="#react">React</a>, busca os dados e manda o HTML <strong>já pronto</strong>. O navegador exibe imediatamente e depois <strong>hidrata</strong> — anexa o JavaScript ao HTML existente para torná-lo interativo.</p>
+  <p>Ganha primeira tela e <a class="x" href="#seo">SEO</a>; paga com servidor rodando e com o código vivendo em dois ambientes (daí <code>window is not defined</code>).</p>
+</article>
+
+<article class="e" id="ssg" data-s="render">
+  <h3><a class="self" href="#ssg">SSG</a> <span class="t">conc.</span></h3>
+  <p><em>Static Site Generation.</em> O HTML é gerado uma vez, no <a class="x" href="#build">build</a>, e servido como arquivo. Você escreve em Markdown ou lê de um banco, e saem 200 páginas prontas.</p>
+  <p>É o melhor dos mundos quando o conteúdo é igual para todos e muda pouco: rápido, barato, indexável. Ferramentas: <a class="x" href="#astro">Astro</a>, <a class="x" href="#nextjs">Next</a>, Hugo, Jekyll.</p>
+</article>
+
+<article class="e" id="nextjs" data-s="render">
+  <h3><a class="self" href="#nextjs">Next.js</a> <span class="t">fram.</span></h3>
+  <p>Framework <a class="x" href="#react">React</a> com roteamento por pastas, <a class="x" href="#rota">rotas</a> de verdade, <a class="x" href="#api">rotas de API</a> e escolha de <a class="x" href="#renderizacao">renderização</a> por página. O contraste é <a class="x" href="#vite">Vite</a> + React, que só monta o app no navegador e não tem servidor próprio.</p>
+</article>
+
+<article class="e" id="astro" data-s="render">
+  <h3><a class="self" href="#astro">Astro</a> <span class="t">fram.</span></h3>
+  <p>Framework voltado a sites de <strong>conteúdo</strong>: gera <a class="x" href="#ssg">HTML estático</a> por padrão e só manda JavaScript onde há interatividade. Para blog, documentação ou catálogo de receitas indexável, costuma ser a escolha mais direta.</p>
+</article>
+
+<article class="e" id="rota" data-s="render">
+  <h3><a class="self" href="#rota">Rota</a> <span class="t">conc.</span></h3>
+  <p>O mapeamento de uma URL para uma tela. Ter rota “de verdade” significa que <code>/receitas/482</code> existe sozinha: abre colada na barra, recarrega sem perder o lugar, e o botão de voltar funciona.</p>
+  <p>Numa <a class="x" href="#spa">SPA</a> isso é construído à mão e costuma ficar incompleto; em <a class="x" href="#nextjs">Next</a> vem de graça. E sem rota não há o que indexar — <a class="x" href="#seo">SEO</a> nem começa.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-infra" data-s="infra">
+<h2>7. Hospedagem e execução</h2>
+<p class="shead">Onde o código roda — e a distinção que decide tudo: existe entre as requisições, ou não?</p>
+
+<article class="e" id="deploy" data-s="infra">
+  <h3><a class="self" href="#deploy">Deploy</a> <span class="t">conc.</span></h3>
+  <p>Publicar o resultado do <a class="x" href="#build">build</a>. São etapas separadas — build produz, deploy leva — ainda que plataformas como a <a class="x" href="#vercel">Vercel</a> façam as duas em sequência.</p>
+</article>
+
+<article class="e" id="vercel" data-s="infra">
+  <h3><a class="self" href="#vercel">Vercel</a> <span class="t">serv.</span></h3>
+  <p>Hospedagem que acrescenta cinco coisas a “um servidor com arquivos”: <a class="x" href="#build">build</a> automático a cada <code>push</code>, <a class="x" href="#cdn">CDN</a>, HTTPS e domínio, <a class="x" href="#deploy">deploy</a> atômico com <em>rollback</em>, e funções <a class="x" href="#serverless">serverless</a> para o que precisa de servidor.</p>
+  <p>Alternativas: Netlify, Cloudflare Pages, Render; <a class="x" href="#github-pages">GitHub Pages</a> para o que é só estático; S3 + CloudFront montado à mão; <a class="x" href="#vps">VPS</a> para controle total.</p>
+</article>
+
+<article class="e" id="cdn" data-s="infra">
+  <h3><a class="self" href="#cdn">CDN</a> <span class="t">conc.</span></h3>
+  <p><em>Content Delivery Network.</em> Os arquivos ficam replicados em dezenas de pontos no mundo, e quem acessa pega do mais próximo. É o que faz um site abrir rápido em qualquer lugar, e o motivo de conteúdo estático ser tão barato de servir.</p>
+</article>
+
+<article class="e" id="github-pages" data-s="infra">
+  <h3><a class="self" href="#github-pages">GitHub Pages</a> <span class="t">serv.</span></h3>
+  <p>Hospedagem gratuita de arquivos estáticos direto de um <a class="x" href="#repo">repo</a> do <a class="x" href="#github">GitHub</a>. Sem <a class="x" href="#build">build</a> sofisticado e sem <a class="x" href="#serverless">funções</a> — e exatamente suficiente para uma página como esta.</p>
+</article>
+
+<article class="e" id="vps" data-s="infra">
+  <h3><a class="self" href="#vps">VPS</a> <span class="t">serv.</span></h3>
+  <p><em>Virtual Private Server</em>: uma máquina Linux virtual que é sua, com IP e root. De uns US$5/mês (DigitalOcean, Hetzner, Linode).</p>
+  <p><strong>A conta real não é o aluguel, é a manutenção.</strong> Um VPS envelhece: pacote desatualizado, disco que enche, certificado que expira, SSH mal configurado. É trabalho recorrente para sempre, e raramente vale para um produto só.</p>
+</article>
+
+<article class="e" id="serverless" data-s="infra">
+  <h3><a class="self" href="#serverless">Serverless</a> <span class="t">conc.</span></h3>
+  <p>Modelo em que chega uma requisição, a plataforma <strong>acorda</strong> uma instância do seu código, ela responde e <strong>morre</strong>. Entre requisições, nada seu está rodando — por isso é barato: paga-se por milissegundo, não por máquina ligada.</p>
+  <p>As restrições: nada sobrevive entre chamadas, teto de tempo por requisição, <a class="x" href="#cold-start">cold start</a>, disco efêmero, e nenhum acesso à camada de <a class="x" href="#socket">socket</a> (o que inviabiliza <a class="x" href="#mtls">mTLS</a> e <a class="x" href="#websocket">WebSocket</a>).</p>
+  <p class="note">Cuidado com um mal-entendido comum: trabalho agendado <em>funciona</em> em serverless — o <a class="x" href="#cron">cron</a> está fora e chama a função. O que não funciona é guardar estado entre invocações. Ver <a class="x" href="#stateless">stateless</a>.</p>
+</article>
+
+<article class="e" id="cold-start" data-s="infra">
+  <h3><a class="self" href="#cold-start">Cold start</a> <span class="t">conc.</span></h3>
+  <p>O atraso da primeira chamada a uma função <a class="x" href="#serverless">serverless</a> depois de um período parado: a plataforma precisa carregar o ambiente antes de executar. As seguintes são rápidas, enquanto a instância seguir viva.</p>
+</article>
+
+<article class="e" id="stateless" data-s="infra">
+  <h3><a class="self" href="#stateless">Stateless × stateful</a> <span class="t">conc.</span></h3>
+  <p><strong>Stateless</strong>: cada execução carrega tudo o que precisa e não lembra da anterior. É o modelo do <a class="x" href="#http">HTTP</a>, do <a class="x" href="#rest">REST</a> e do <a class="x" href="#serverless">serverless</a> — todo estado mora fora (banco, fila, storage) e é recarregado.</p>
+  <p><strong>Stateful</strong>: algo persiste em memória entre um momento e o próximo — uma sessão autenticada, uma conexão aberta, uma fila sendo consumida. Isso exige <a class="x" href="#processo">processo de longa duração</a>.</p>
+  <p>A pergunta que decide a arquitetura: <em>seu código precisa existir também quando ninguém está pedindo nada?</em></p>
+</article>
+
+<article class="e" id="processo" data-s="infra">
+  <h3><a class="self" href="#processo">Processo de longa duração</a> <span class="t">conc.</span></h3>
+  <p>Programa que sobe e <strong>fica ligado</strong>, decidindo o que fazer: mantém memória, conexões abertas e disco que persiste. Paga-se pela máquina, ocupada ou não.</p>
+  <p>Necessário quando há estado em memória entre execuções, conexão persistente (<a class="x" href="#websocket">WebSocket</a>, <a class="x" href="#mtls">mTLS</a>), ou trabalho longo que precisa de ritmo. Hospeda-se em Fly.io, Render, Railway ou <a class="x" href="#vps">VPS</a>.</p>
+</article>
+
+<article class="e" id="worker" data-s="infra">
+  <h3><a class="self" href="#worker">Worker</a> <span class="t">conc.</span></h3>
+  <p>Um <a class="x" href="#processo">processo</a> que <strong>não escuta porta nenhuma e não tem URL</strong>: fica ligado consumindo uma <a class="x" href="#fila">fila</a>. Distingue-se do <em>web service</em>, que recebe <a class="x" href="#http">HTTP</a> e responde.</p>
+  <pre><code>usuário → web service → põe na fila → responde "recebi" na hora
+                            ↓
+                       worker processa devagar, grava o resultado</code></pre>
+  <p>Existe porque o usuário não pode esperar três minutos numa requisição HTTP.</p>
+</article>
+
+<article class="e" id="fila" data-s="infra">
+  <h3><a class="self" href="#fila">Fila</a> <span class="t">conc.</span></h3>
+  <p>Lista de trabalhos pendentes que alguém vai processar depois. Dá três coisas: resposta imediata ao usuário, ritmo controlado (útil quando o destino bloqueia excesso de chamadas) e repetição automática em caso de falha. Consumida por um <a class="x" href="#worker">worker</a>.</p>
+</article>
+
+<article class="e" id="preview-deployment" data-s="infra">
+  <h3><a class="self" href="#preview-deployment">Preview deployment</a> <span class="t">conc.</span></h3>
+  <p>URL pública que plataformas como a <a class="x" href="#vercel">Vercel</a> geram para cada <a class="x" href="#deploy">deploy</a>, do tipo <code>projeto-3f9a2b.vercel.app</code>. Útil para revisar antes de publicar.</p>
+  <p><strong>Risco:</strong> são acessíveis e podem ser indexadas, fazendo o app aparecer no Google em vários endereços, um deles com código velho. Confira o cabeçalho:</p>
+  <pre><code>curl -sI https://SEU-PREVIEW.vercel.app/ | grep -i robots</code></pre>
+  <p>Deve vir <a class="x" href="#noindex">noindex</a>.</p>
+</article>
+
+<article class="e" id="electron" data-s="infra">
+  <h3><a class="self" href="#electron">Electron / Tauri</a> <span class="t">fram.</span></h3>
+  <p>Empacotam um navegador dentro de um aplicativo de desktop — VS Code, Slack, Discord, Figma são isso. Ganha-se reaproveitar time e código da web; paga-se em memória e tamanho. O Tauri ataca esse custo usando o navegador que o sistema já tem e escrevendo o núcleo em Rust.</p>
+  <p class="note">Fora do navegador, o papel do <a class="x" href="#javascript">JavaScript</a> cabe à linguagem da plataforma — C# com WPF/XAML, Swift com SwiftUI, Kotlin com Compose. O que é universal é o <strong>laço de eventos</strong>: espera → acontece algo → código roda → estado muda → tela é redesenhada.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-dados" data-s="dados">
+<h2>8. Dados, banco e formatos</h2>
+<p class="shead">Onde a informação mora, e em que forma ela viaja.</p>
+
+<article class="e" id="postgres" data-s="dados">
+  <h3><a class="self" href="#postgres">Postgres</a> <span class="t">ferr.</span></h3>
+  <p>PostgreSQL: banco relacional open-source, e o que está embaixo do <a class="x" href="#supabase">Supabase</a>. Tudo o que o Supabase faz — políticas de acesso, migrations, funções, gatilhos — é Postgres puro com uma camada de conveniência por cima, escrito em <a class="x" href="#sql">SQL</a>.</p>
+</article>
+
+<article class="e" id="supabase" data-s="dados">
+  <h3><a class="self" href="#supabase">Supabase</a> <span class="t">serv.</span></h3>
+  <p>Plataforma que entrega um <a class="x" href="#postgres">Postgres</a> gerenciado mais o que costuma vir junto: autenticação, <a class="x" href="#api">API</a> automática (<a class="x" href="#postgrest">PostgREST</a>), armazenamento de arquivos, tempo real por <a class="x" href="#websocket">WebSocket</a> e funções. O ponto é não ser uma caixa-preta: por baixo é Postgres, e você pode descer até o <a class="x" href="#sql">SQL</a>.</p>
+</article>
+
+<article class="e" id="crud" data-s="dados">
+  <h3><a class="self" href="#crud">CRUD</a> <span class="t">conc.</span></h3>
+  <p><em>Create, Read, Update, Delete</em> — as quatro operações básicas sobre um registro. “Uma tela de CRUD” é uma tela que lista, cria, edita e apaga. É o vocabulário para dizer “essa parte não tem nada de especial”. Mapeia direto nos verbos do <a class="x" href="#rest">REST</a>.</p>
+</article>
+
+<article class="e" id="parser" data-s="dados">
+  <h3><a class="self" href="#parser">Parse / parser</a> <span class="t">conc.</span></h3>
+  <p><em>Parsear</em> é ler um texto bruto e transformar em estrutura que o programa entende; o <strong>parser</strong> é o código que faz isso. Um leitor de nota fiscal é essencialmente um parser: pega o HTML da página e extrai itens, valores e CNPJ. “Erro de parsing” significa que o texto veio num formato diferente do esperado.</p>
+  <p>O navegador parseia <a class="x" href="#html">HTML</a> para construir o <a class="x" href="#dom">DOM</a>.</p>
+</article>
+
+<article class="e" id="json" data-s="dados">
+  <h3><a class="self" href="#json">JSON</a> <span class="t">form.</span></h3>
+  <p><em>JavaScript Object Notation</em>: o formato padrão de troca de dados entre sistemas. Texto, legível, com objetos, listas, números, strings e booleanos — e nada mais (sem data nativa, sem comentários).</p>
+  <pre><code>{ "titulo": "Parquet", "ano": 2013, "colunar": true }</code></pre>
+</article>
+
+<article class="e" id="yaml" data-s="dados">
+  <h3><a class="self" href="#yaml">YAML</a> <span class="t">form.</span></h3>
+  <p>Formato de configuração legível, onde a <a class="x" href="#indentacao">indentação</a> define a estrutura em vez de chaves. É o formato de GitHub Actions, <code>docker-compose</code> e afins.</p>
+  <pre><code>jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm ci</code></pre>
+  <p>Três armadilhas: <strong>tab é proibido</strong> (só espaço); recuo inconsistente quebra; e valores sem aspas podem virar outra coisa — <code>no</code> e <code>off</code> viram booleano, <code>1.20</code> vira número. Na dúvida, aspas.</p>
+</article>
+
+<article class="e" id="indentacao" data-s="dados">
+  <h3><a class="self" href="#indentacao">Indentação</a> <span class="t">conc.</span></h3>
+  <p>O espaço em branco no começo da linha, usado para mostrar hierarquia. Na maioria das linguagens é <strong>cosmética</strong> — o <a class="x" href="#javascript">JavaScript</a> usa chaves para delimitar blocos, e mal indentado roda igual.</p>
+  <p>Em <a class="x" href="#yaml">YAML</a> e Python, não: a indentação <strong>é</strong> a sintaxe, e mudar o recuo muda o significado — às vezes para outro significado válido, o que é pior, porque não dá erro. Em Makefile, ao contrário de tudo, o tab é obrigatório.</p>
+</article>
+
+<article class="e" id="parquet" data-s="dados">
+  <h3><a class="self" href="#parquet">Parquet</a> <span class="t">form.</span></h3>
+  <p>Formato de arquivo para dados tabulares, <strong>colunar</strong>. Num CSV o arquivo é linha 1 inteira, linha 2 inteira; no Parquet é toda a coluna A, depois toda a coluna B.</p>
+  <ul>
+    <li><code>SUM(valor)</code> lê só aquela coluna — as outras nem saem do disco</li>
+    <li>comprime muito melhor (valores do mesmo tipo, repetidos): 5 a 10× menor que o CSV</li>
+    <li>tem tipos e esquema embutidos — CNPJ não perde o zero à esquerda</li>
+  </ul>
+  <p>O preço: ilegível por humano, e ruim para escrever uma linha por vez. É formato de análise (Spark, DuckDB, pandas), não de aplicação transacional.</p>
+</article>
+
+<article class="e" id="delta" data-s="dados">
+  <h3><a class="self" href="#delta">Delta format</a> <span class="t">form.</span></h3>
+  <p>Depende do contexto, e valem os dois sentidos.</p>
+  <p><strong>Delta Lake</strong>: um monte de arquivos <a class="x" href="#parquet">Parquet</a> mais um log de transações dizendo quais deles formam a versão atual da tabela. O Parquet guarda os dados; o log acrescenta transação, <code>UPDATE</code>/<code>DELETE</code> e histórico.</p>
+  <p><strong>Delta genérico</strong>: guardar só a <em>diferença</em> em vez do estado inteiro — é o que o <a class="x" href="#git">Git</a> faz, e o que uma <a class="x" href="#api">API</a> faz em “sincronização incremental”. O fio comum: <em>delta</em> é a mudança, não o todo.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-rede" data-s="rede">
+<h2>9. APIs, protocolos e rede</h2>
+<p class="shead">Como dois programas conversam.</p>
+
+<article class="e" id="api" data-s="rede">
+  <h3><a class="self" href="#api">API</a> <span class="t">conc.</span></h3>
+  <p><em>Application Programming Interface</em>: o conjunto de operações que um sistema oferece para <strong>outro programa</strong> usar. Não é tela, é contrato.</p>
+</article>
+
+<article class="e" id="http" data-s="rede">
+  <h3><a class="self" href="#http">HTTP</a> <span class="t">prot.</span></h3>
+  <p>O protocolo da web. É <a class="x" href="#stateless">stateless</a> e sempre iniciado pelo cliente: você pede, o servidor responde, acabou — o servidor não tem como falar primeiro (daí <a class="x" href="#websocket">WebSocket</a>).</p>
+  <p>Cada resposta traz um <strong>status</strong>, que faz parte do contrato: <code>200</code> ok, <code>201</code> criado, <code>400</code> pedido malformado, <code>401</code> sem credencial, <code>403</code> credencial válida mas sem permissão, <code>404</code> não existe, <code>500</code> erro do servidor. <strong>HTTPS</strong> é o mesmo protocolo dentro de <a class="x" href="#tls">TLS</a>.</p>
+</article>
+
+<article class="e" id="rest" data-s="rede">
+  <h3><a class="self" href="#rest">REST</a> <span class="t">pad.</span></h3>
+  <p>Sim, é sigla — <strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer —, e ela não ajuda: veio de uma tese de doutorado de 2000 e descreve mal o que se faz com o termo hoje. (O sentido original: o que trafega não é o objeto, é uma <em>representação</em> do estado dele, num formato como <a class="x" href="#json">JSON</a>.)</p>
+  <p>Na prática, “API REST” quer dizer apenas: <strong>uma <a class="x" href="#api">API</a> sobre <a class="x" href="#http">HTTP</a> em que a URL identifica uma coisa e o verbo diz o que fazer com ela</strong>.</p>
+  <pre><code>GET    /receitas/482   → me dá
+PATCH  /receitas/482   → altera
+DELETE /receitas/482   → apaga
+POST   /receitas       → cria</code></pre>
+  <p>O contraste é com o que existia antes — tudo <code>POST</code>, a ação escondida num parâmetro (<code>?action=deleteRecipe</code>), cada API com suas convenções. REST padronizou: o verbo já está no HTTP, use-o. Daí sair de graça o cache e o fato de você adivinhar uma API que nunca viu. Mapeia no <a class="x" href="#crud">CRUD</a>.</p>
+  <p class="note">Quase nenhuma API dita REST é REST no sentido estrito — a tese exige coisas que ninguém implementa. A comunidade usa o termo para o padrão prático acima.</p>
+</article>
+
+<article class="e" id="postgrest" data-s="rede">
+  <h3><a class="self" href="#postgrest">PostgREST</a> <span class="t">ferr.</span></h3>
+  <p>Expõe as tabelas de um <a class="x" href="#postgres">Postgres</a> como <a class="x" href="#rest">API REST</a> automaticamente. É o que está por baixo do cliente do <a class="x" href="#supabase">Supabase</a> — e a origem de detalhes como o limite padrão de linhas por resposta, que surpreende quem espera receber tudo.</p>
+</article>
+
+<article class="e" id="graphql" data-s="rede">
+  <h3><a class="self" href="#graphql">GraphQL / gRPC</a> <span class="t">pad.</span></h3>
+  <p>Alternativas ao <a class="x" href="#rest">REST</a>. <strong>GraphQL</strong>: o cliente pede exatamente os campos que quer, numa URL só — resolve o excesso e a falta de dados de APIs REST, ao custo de complexidade no servidor. <strong>gRPC</strong>: binário e rápido, para serviço falando com serviço. <strong>tRPC</strong>: tipos compartilhados entre front e back em <a class="x" href="#typescript">TypeScript</a>.</p>
+</article>
+
+<article class="e" id="webhook" data-s="rede">
+  <h3><a class="self" href="#webhook">Webhook</a> <span class="t">conc.</span></h3>
+  <p>Uma URL sua que um serviço externo chama quando acontece um evento — é como um provedor de pagamento avisa seu sistema de que a cobrança passou. Inverte o sentido da <a class="x" href="#api">API</a>: em vez de você perguntar (<a class="x" href="#polling">polling</a>), ele avisa.</p>
+  <p>Detalhe que só aparece depois de publicado: endpoint de webhook costuma ser <strong>por conta, não por produto</strong>. Se dois apps usam a mesma conta, cada rota recebe os eventos do outro — e deve responder <code>200</code> quando o evento não é dela, e não erro, ou o serviço retenta por dias.</p>
+</article>
+
+<article class="e" id="hook" data-s="rede">
+  <h3><a class="self" href="#hook">Hook</a> <span class="t">conc.</span></h3>
+  <p>“Gancho”: um ponto onde o sistema chama um código seu automaticamente quando algo acontece. Três usos bem diferentes:</p>
+  <ul>
+    <li><strong>Git hook</strong> — script que roda antes do <a class="x" href="#commit">commit</a>, por exemplo para rodar <a class="x" href="#lint">lint</a>.</li>
+    <li><strong><a class="x" href="#webhook">Webhook</a></strong> — chamada vinda de um serviço externo.</li>
+    <li><strong>React hook</strong> — <code>useState</code>, <code>useEffect</code> e os seus próprios: funções que engancham estado e ciclo de vida num componente do <a class="x" href="#react">React</a>. Sentido bem distinto dos outros dois.</li>
+  </ul>
+</article>
+
+<article class="e" id="socket" data-s="rede">
+  <h3><a class="self" href="#socket">Socket</a> <span class="t">conc.</span></h3>
+  <p>A abstração do sistema operacional para uma conexão de rede: um canal por onde entram e saem bytes. Tudo em rede é socket lá no fundo.</p>
+  <p><strong>Socket cru</strong> (<em>raw socket</em>) é usar esse canal sem protocolo de aplicação por cima — você manda os bytes que quiser. Aparece em protocolos que não são <a class="x" href="#http">HTTP</a>, em equipamento industrial, e quando é preciso controlar a camada <a class="x" href="#tls">TLS</a>, como no <a class="x" href="#mtls">mTLS</a>. É a camada que plataformas <a class="x" href="#serverless">serverless</a> não expõem.</p>
+</article>
+
+<article class="e" id="websocket" data-s="rede">
+  <h3><a class="self" href="#websocket">WebSocket</a> <span class="t">prot.</span></h3>
+  <p>Mantém uma <strong>conexão aberta e de mão dupla</strong> entre navegador e servidor. Começa como uma requisição <a class="x" href="#http">HTTP</a> pedindo “faça upgrade”; aceito, a mesma conexão fica aberta e os dois lados mandam mensagem a qualquer momento. A URL muda para <code>wss://</code>.</p>
+  <p>Resolve o que o HTTP não faz: o servidor falar primeiro — chat, notificação, cotação, edição simultânea. É o que está por trás do tempo real do <a class="x" href="#supabase">Supabase</a>. E, por manter conexão viva, exige <a class="x" href="#processo">processo</a>, não <a class="x" href="#serverless">serverless</a>.</p>
+</article>
+
+<article class="e" id="polling" data-s="rede">
+  <h3><a class="self" href="#polling">Polling</a> <span class="t">prát.</span></h3>
+  <p>Perguntar repetidamente “tem novidade?” — a gambiarra pré-<a class="x" href="#websocket">WebSocket</a>. Desperdiça chamadas e atrasa a notícia. O <em>long polling</em> ameniza fazendo o servidor segurar a resposta até ter algo.</p>
+</article>
+
+<article class="e" id="user-agent" data-s="rede">
+  <h3><a class="self" href="#user-agent">User-Agent</a> <span class="t">conc.</span></h3>
+  <p>Cabeçalho <a class="x" href="#http">HTTP</a> em que o cliente diz quem é — navegador, robô, ou o que ele quiser alegar. Serviços usam isso para liberar ou bloquear.</p>
+  <p>Pode virar incompatibilidade real: um mesmo sistema pode precisar de um User-Agent de navegador para um destino e ser <em>recusado</em> por ele em outro. Testa-se com <code>curl -A</code>. Ver <a class="x" href="#curl">curl</a>.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-seg" data-s="seg">
+<h2>10. Segredos, certificados e segurança</h2>
+<p class="shead">O que não pode vazar, e onde guardar.</p>
+
+<article class="e" id="env" data-s="seg">
+  <h3><a class="self" href="#env">.env</a> <span class="t">arq.</span></h3>
+  <p>Arquivo de variáveis de ambiente — chaves de API, senhas, URLs de projeto — mantido fora do <a class="x" href="#repo">repo</a> pelo <a class="x" href="#gitignore">.gitignore</a>. O costume é versionar um <code>.env.example</code> com os <em>nomes</em> das variáveis e nenhum valor, para quem clonar saber o que precisa preencher.</p>
+  <p class="note">Numa <a class="x" href="#spa">SPA</a>, variável embutida no <a class="x" href="#bundle">bundle</a> <strong>não é segredo</strong> — está no navegador do usuário. Segredo de verdade só existe do lado do servidor.</p>
+</article>
+
+<article class="e" id="vault" data-s="seg">
+  <h3><a class="self" href="#vault">Vault</a> <span class="t">ferr.</span></h3>
+  <p>Cofre de segredos: guarda muitos segredos de tipos variados, criptografados, com política de quem lê o quê e registro de cada leitura — e <strong>te devolve o valor</strong>. É o modelo, não uma falha: em algum momento o segredo entra na memória da aplicação.</p>
+  <p>Existe embutido no <a class="x" href="#supabase">Supabase</a> e como produto autônomo (HashiCorp Vault). Complementar ao <a class="x" href="#hsm">HSM</a>, não alternativo.</p>
+</article>
+
+<article class="e" id="hsm" data-s="seg">
+  <h3><a class="self" href="#hsm">HSM</a> <span class="t">ferr.</span></h3>
+  <p><em>Hardware Security Module</em>: uma caixa física ou chip que guarda a chave privada e <strong>nunca a entrega</strong>. Você manda o dado, ele devolve assinado. Não há operação que exporte a chave — nem para você.</p>
+  <p>A diferença para o <a class="x" href="#vault">Vault</a>: o Vault devolve o segredo, o HSM devolve só o resultado. Se o servidor for comprometido, o atacante assina enquanto tiver acesso, mas não leva a chave. Um token A3 é um HSM pequeno.</p>
+  <p class="note">Composição clássica: o HSM guarda a chave-mestra, e o Vault usa essa chave para criptografar todo o resto.</p>
+</article>
+
+<article class="e" id="openssl" data-s="seg">
+  <h3><a class="self" href="#openssl">OpenSSL</a> <span class="t">ferr.</span></h3>
+  <p>A biblioteca (e a <a class="x" href="#cli">CLI</a>) que faz o trabalho de criptografia na maior parte da internet: gerar chaves, criar e inspecionar certificados, converter formatos, abrir um <code>.pfx</code>/<code>.p12</code>. É a ferramenta de quem mexe com <a class="x" href="#certificado">certificado digital</a>.</p>
+</article>
+
+<article class="e" id="certificado" data-s="seg">
+  <h3><a class="self" href="#certificado">Certificado A1 / A3</a> <span class="t">conc.</span></h3>
+  <p>No padrão brasileiro de certificação digital: <strong>A1</strong> é um arquivo (<code>.pfx</code>) protegido por senha, que pode ser copiado e instalado — validade de um ano. <strong>A3</strong> vive num token ou cartão, é um <a class="x" href="#hsm">HSM</a> pequeno, e a chave não sai de lá — validade maior.</p>
+  <p>A diferença prática é exatamente a de Vault e HSM: o A1 é conveniente e copiável; o A3 é seguro e não automatizável sem o dispositivo presente.</p>
+</article>
+
+<article class="e" id="tls" data-s="seg">
+  <h3><a class="self" href="#tls">TLS</a> <span class="t">prot.</span></h3>
+  <p><em>Transport Layer Security</em> (sucessor do SSL): a camada que criptografa a conexão. <a class="x" href="#http">HTTP</a> dentro de TLS é HTTPS. Dá três garantias: sigilo, integridade, e <strong>autenticidade do servidor</strong> — ele prova quem é, com um certificado assinado por uma autoridade que o navegador reconhece.</p>
+</article>
+
+<article class="e" id="mtls" data-s="seg">
+  <h3><a class="self" href="#mtls">mTLS</a> <span class="t">prot.</span></h3>
+  <p><em>Mutual TLS</em>: os <strong>dois</strong> lados provam quem são. Além do servidor, o cliente apresenta um certificado durante o <a class="x" href="#handshake">handshake</a>. É autenticação por certificado, não por senha.</p>
+  <p>Consequência arquitetural: isso acontece na camada de <a class="x" href="#socket">conexão</a>, antes de qualquer HTTP. Exige controle sobre o <a class="x" href="#socket">socket</a> — carregar a chave privada, montar o contexto TLS, negociar —, e plataformas <a class="x" href="#serverless">serverless</a> não expõem esse nível. Não é limitação de cota: a peça não existe. Por isso esse tipo de sistema pede <a class="x" href="#processo">processo</a>.</p>
+</article>
+
+<article class="e" id="handshake" data-s="seg">
+  <h3><a class="self" href="#handshake">Handshake</a> <span class="t">conc.</span></h3>
+  <p>“Aperto de mão”: a negociação inicial de uma conexão, antes de qualquer dado útil. No <a class="x" href="#tls">TLS</a> é onde se acerta a versão do protocolo, o algoritmo de criptografia, se verifica o certificado do servidor (e, em <a class="x" href="#mtls">mTLS</a>, o do cliente) e se estabelece a chave da sessão.</p>
+  <p>É a etapa que custa tempo, e o motivo de reaproveitar conexões importar. Erros de certificado aparecem aqui — antes de existir requisição.</p>
+</article>
+
+<article class="e" id="token" data-s="seg">
+  <h3><a class="self" href="#token">Token</a> <span class="t">conc.</span></h3>
+  <p>Uma referência opaca que substitui um dado sensível. O caso clássico é o cartão de crédito: o número vai do navegador direto ao processador de pagamento, e o que volta para você é um token que só serve para cobrar naquela conta — e não vale nada se vazar. Ver <a class="x" href="#pci">PCI DSS</a>.</p>
+  <p>Também se usa para credenciais de acesso (um <em>token</em> de sessão ou de API), com a mesma ideia: algo revogável e de escopo limitado, em vez da senha real.</p>
+</article>
+
+<article class="e" id="pci" data-s="seg">
+  <h3><a class="self" href="#pci">PCI DSS</a> <span class="t">pad.</span></h3>
+  <p><em>Payment Card Industry Data Security Standard</em>: a norma que as bandeiras impõem a quem toca dados de cartão. Não é lei, é contrato — descumprir custa multa e, no limite, o direito de aceitar cartão. Exige rede segmentada, criptografia, log de tudo, varredura trimestral e auditoria: um programa contínuo.</p>
+  <p><strong>A conclusão prática é uma só: você não quer estar no escopo.</strong> Basta que o número do cartão nunca toque seu servidor — usando o formulário hospedado do provedor (um <code>iframe</code> dele, ou redirecionamento) e recebendo de volta um <a class="x" href="#token">token</a>.</p>
+  <p class="note">O jeito de estragar é específico: construir o próprio formulário de cartão e mandar os dados ao seu back-end. Nesse instante você entra no escopo inteiro.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-qual" data-s="qual">
+<h2>11. Verificação e qualidade</h2>
+<p class="shead">Como saber que funciona — e como não quebrar ao tentar.</p>
+
+<article class="e" id="smoke-test" data-s="qual">
+  <h3><a class="self" href="#smoke-test">Smoke test</a> <span class="t">prát.</span></h3>
+  <p>Também <em>teste de fumaça</em>. O teste mínimo que responde “isso está de pé?”. O nome vem da eletrônica: liga e vê se sai fumaça.</p>
+  <p>Não checa se está <em>correto</em>, checa se não está <em>morto</em> — abre a home, faz login, salva um registro. É o que se roda logo depois de um <a class="x" href="#deploy">deploy</a>.</p>
+</article>
+
+<article class="e" id="dry-run" data-s="qual">
+  <h3><a class="self" href="#dry-run">Dry run</a> <span class="t">prát.</span></h3>
+  <p>Rodar “a seco”: o programa executa e <strong>diz o que faria</strong>, sem fazer. <code>rsync --dry-run</code>, <code>terraform plan</code>, <code>npm publish --dry-run</code>. É a defesa padrão antes de qualquer operação destrutiva ou em massa.</p>
+</article>
+
+<article class="e" id="analise-estatica" data-s="qual">
+  <h3><a class="self" href="#analise-estatica">Análise estática</a> <span class="t">conc.</span></h3>
+  <p>Encontrar problemas <strong>sem executar</strong> o código: <a class="x" href="#lint">lint</a>, <a class="x" href="#prettier">formatter</a> e <a class="x" href="#type-checker">type checker</a>. O complemento é o teste, que só pega o que aparece rodando. As duas coisas não se substituem.</p>
+</article>
+
+<article class="e" id="medir" data-s="qual">
+  <h3><a class="self" href="#medir">Medir antes de afirmar</a> <span class="t">prát.</span></h3>
+  <p>Hábito, não ferramenta: checar a hipótese em vez de deduzi-la. Duas armadilhas que aparecem sempre:</p>
+  <ul>
+    <li><strong>amostra de um não prova “qualquer”.</strong> Um destino que falha não autoriza concluir “nenhum destino funciona”.</li>
+    <li><strong>medir com controle.</strong> Para saber se uma coluna existe, pergunte também por uma coluna inventada; se o erro for o mesmo, a medição não está medindo nada.</li>
+  </ul>
+  <p><a class="x" href="#curl">curl</a> e <a class="x" href="#dry-run">dry run</a> são as ferramentas mais diretas disso.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-seo" data-s="seo">
+<h2>12. Conteúdo e web pública</h2>
+<p class="shead">Ser encontrado, e ser compartilhável.</p>
+
+<article class="e" id="seo" data-s="seo">
+  <h3><a class="self" href="#seo">SEO</a> <span class="t">prát.</span></h3>
+  <p><em>Search Engine Optimization</em>: fazer o conteúdo ser encontrado em buscadores. Só alcança o que abre <strong>sem login</strong> — página atrás de autenticação não é assunto de SEO.</p>
+  <p>A <a class="x" href="#renderizacao">renderização</a> importa, mas não é tudo: <a class="x" href="#csr">CSR</a> não torna o site invisível (o Google executa JavaScript), e sim mais lento para indexar, frágil, com títulos repetidos, e <strong>completamente opaco para os robôs que não executam JS</strong> — WhatsApp e redes sociais entre eles. Ver <a class="x" href="#open-graph">Open Graph</a>.</p>
+</article>
+
+<article class="e" id="robots" data-s="seo">
+  <h3><a class="self" href="#robots">robots.txt</a> <span class="t">arq.</span></h3>
+  <p>Arquivo na raiz do site que diz aos robôs o que <strong>não visitar</strong>.</p>
+  <pre><code>User-agent: *
+Disallow: /admin/
+
+Sitemap: https://exemplo.com.br/sitemap.xml</code></pre>
+  <p>Três mal-entendidos: <strong>(1)</strong> é um pedido, não uma trava — e por ser público, listar <code>/admin/</code> apenas publica onde ele fica; <strong>(2)</strong> impede a visita, não a indexação (ver <a class="x" href="#noindex">noindex</a>); <strong>(3)</strong> um <code>Disallow: /</code> esquecido derruba o site inteiro da busca, silenciosamente — é o primeiro item a conferir em qualquer “não aparecemos no Google”.</p>
+</article>
+
+<article class="e" id="noindex" data-s="seo">
+  <h3><a class="self" href="#noindex">noindex</a> <span class="t">conc.</span></h3>
+  <p>Instrução para o robô <strong>não listar</strong> a página no resultado. Vai na própria página, nunca no <a class="x" href="#robots">robots.txt</a>:</p>
+  <pre><code>&lt;meta name="robots" content="noindex"&gt;</code></pre>
+  <p>Ou como cabeçalho <a class="x" href="#http">HTTP</a> — única opção quando não há HTML (PDF, imagem):</p>
+  <pre><code>X-Robots-Tag: noindex</code></pre>
+  <p><strong>A armadilha:</strong> <code>Disallow</code> no robots.txt impede o robô de ver o <code>noindex</code>. Bloqueada, a página não é baixada, a meta tag não é lida, e a URL pode ser listada assim mesmo — sem descrição. Para tirar do Google de verdade: <strong>libere no robots.txt e ponha noindex na página</strong>.</p>
+</article>
+
+<article class="e" id="sitemap" data-s="seo">
+  <h3><a class="self" href="#sitemap">sitemap.xml</a> <span class="t">arq.</span></h3>
+  <p>Lista das URLs que você quer que sejam indexadas, com data de atualização. Não garante indexação; ajuda o robô a descobrir o que existe, sobretudo em site grande ou com páginas pouco linkadas. Frameworks como o <a class="x" href="#nextjs">Next</a> geram o arquivo a partir das <a class="x" href="#rota">rotas</a>, o que evita que ele envelheça.</p>
+</article>
+
+<article class="e" id="open-graph" data-s="seo">
+  <h3><a class="self" href="#open-graph">Open Graph</a> <span class="t">pad.</span></h3>
+  <p>Conjunto de meta tags (<code>og:title</code>, <code>og:description</code>, <code>og:image</code>) que define o <strong>card</strong> exibido quando alguém compartilha o link.</p>
+  <p>Ponto crítico: os robôs de WhatsApp, Instagram, Facebook e LinkedIn <strong>não executam JavaScript</strong> — leem só o HTML que chega. Numa <a class="x" href="#spa">SPA</a>, tags injetadas por JS não existem para eles, e o link aparece sem foto nem título. Precisa estar no HTML <em>servido</em>.</p>
+</article>
+
+<article class="e" id="dados-estruturados" data-s="seo">
+  <h3><a class="self" href="#dados-estruturados">Dados estruturados</a> <span class="t">pad.</span></h3>
+  <p>Marcação em <a class="x" href="#json">JSON-LD</a> (vocabulário schema.org) que descreve o conteúdo de forma legível por máquina: que aquilo é uma receita, com ingredientes, tempo de preparo, porções e avaliação.</p>
+  <p>É o que produz o <em>resultado rico</em> do Google — com foto e estrelas. Depende de o HTML ser servido pronto, o que liga isso diretamente à escolha de <a class="x" href="#renderizacao">renderização</a>.</p>
+</article>
+
+<article class="e" id="cms" data-s="seo">
+  <h3><a class="self" href="#cms">CMS / headless CMS</a> <span class="t">serv.</span></h3>
+  <p><strong>CMS</strong> (<em>Content Management System</em>) é onde pessoas não-técnicas escrevem e editam o conteúdo do site. O <a class="x" href="#wordpress">WordPress</a> tradicional é <em>acoplado</em>: guarda o texto <strong>e</strong> monta a página.</p>
+  <p><strong>Headless</strong> (“sem cabeça”) jogou fora a parte de montar a página. Sobra um banco de conteúdo estruturado mais uma <a class="x" href="#api">API</a> que o devolve como dados — <a class="x" href="#json">JSON</a>, sem <a class="x" href="#html">HTML</a> nem <a class="x" href="#css">CSS</a>. <strong>Quem desenha é você.</strong> Exemplos: Contentful, Sanity, Strapi, Directus, Payload.</p>
+  <p>Resolve modelagem de conteúdo, edição sem tocar no <a class="x" href="#repo">repo</a>, fluxo editorial e um conteúdo servindo vários destinos. Custa a pré-visualização fiel, dependência de um serviço, e assinatura.</p>
+  <p class="note">O critério: headless se paga quando há <strong>alguém além do programador escrevendo conteúdo</strong>. Se só você edita, um arquivo Markdown no <a class="x" href="#repo">repo</a> já é um CMS de graça — com <a class="x" href="#diff">diff</a> e histórico.</p>
+</article>
+
+<article class="e" id="wordpress" data-s="seo">
+  <h3><a class="self" href="#wordpress">WordPress / WooCommerce</a> <span class="t">serv.</span></h3>
+  <p><a class="x" href="#php">PHP</a> + MySQL; o WooCommerce é o plugin que o transforma em loja. Roda cerca de 40% da web.</p>
+  <p>Não cabe na <a class="x" href="#vercel">Vercel</a>, e não é limitação de plano: precisa de banco, <strong>escreve no próprio sistema de arquivos</strong> (upload de imagem, plugin instalado) e <strong>se administra por dentro</strong>, com o site no ar — tudo incompatível com disco efêmero e pacote imutável vindo do <a class="x" href="#git">Git</a>.</p>
+  <p>O moderno equivalente é o <strong>commerce headless</strong>: <a class="x" href="#nextjs">Next</a> na Vercel mais um back-end de comércio por API (Shopify, Medusa, Stripe). Ganha desempenho e flexibilidade; perde onde importa para lojista pequeno — sem programador, nada muda na loja. O critério não é técnico: é <strong>quem opera no dia a dia</strong>.</p>
+</article>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-outros" data-s="outros">
+<h2>13. Diversos</h2>
+<p class="shead">O que não coube em lugar nenhum, e mesmo assim aparece.</p>
+
+<article class="e" id="mcp" data-s="outros">
+  <h3><a class="self" href="#mcp">MCP</a> <span class="t">prot.</span></h3>
+  <p><em>Model Context Protocol</em>: protocolo aberto (Anthropic, 2024) que padroniza como uma IA conversa com ferramentas e dados externos. Antes, cada integração era feita à mão; com MCP, um “servidor MCP” expõe ferramentas e qualquer cliente compatível as usa.</p>
+  <p>É o que permite a um assistente listar seus projetos no <a class="x" href="#supabase">Supabase</a> ou na <a class="x" href="#vercel">Vercel</a> sem você passar nada.</p>
+</article>
+
+<article class="e" id="mv3" data-s="outros">
+  <h3><a class="self" href="#mv3">MV3</a> <span class="t">pad.</span></h3>
+  <p><em>Manifest V3</em>: a versão atual do formato de extensões do Chrome. Trocou as páginas de fundo permanentes por <em>service workers</em> efêmeros — a mesma mudança conceitual do <a class="x" href="#serverless">serverless</a> — e restringiu execução de código remoto. Só importa para quem escreve extensão, mas é o motivo de metade das extensões antigas terem parado de funcionar.</p>
+</article>
+
+<article class="e" id="thumbs-db" data-s="outros">
+  <h3><a class="self" href="#thumbs-db">Thumbs.db / .DS_Store</a> <span class="t">arq.</span></h3>
+  <p>Arquivos que o sistema operacional cria sozinho numa pasta — miniaturas no Windows (<code>Thumbs.db</code>), metadados de exibição no macOS (<code>.DS_Store</code>). Ocultos, regeneráveis e sem relação com o projeto.</p>
+  <p>Estão em praticamente todo <a class="x" href="#gitignore">.gitignore</a> do mundo por serem o exemplo típico de lixo que aparece sozinho, muda sozinho e polui o <a class="x" href="#diff">diff</a>.</p>
+</article>
+</section>
+
+<footer>
+  <p>Glossário pessoal, em construção. Escrito à mão, sem <a class="x" href="#build">build</a> — o arquivo que você lê é o arquivo do <a class="x" href="#repo">repo</a>.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var q = document.getElementById('q');
+  var pills = document.getElementById('pills');
+  var count = document.getElementById('count');
+  var empty = document.getElementById('empty');
+  var entries = Array.prototype.slice.call(document.querySelectorAll('.e'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+  var activeSection = null;
+
+  // índice de busca (texto normalizado, sem acento)
+  function norm(s) {
+    return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+  // o texto do verbete mais o da seção, para que "segurança" ou "terminal"
+  // também encontrem os verbetes que moram sob esses títulos
+  entries.forEach(function (e) {
+    var sec = e.closest('section');
+    var extra = sec ? sec.querySelector('h2').textContent + ' ' + (sec.querySelector('.shead') || {}).textContent : '';
+    e._txt = norm(e.textContent + ' ' + (extra || ''));
+  });
+
+  // pílulas de seção, construídas a partir das próprias seções
+  var allPill = document.createElement('button');
+  allPill.className = 'pill';
+  allPill.textContent = 'tudo';
+  allPill.setAttribute('aria-pressed', 'true');
+  allPill.onclick = function () { setSection(null); };
+  pills.appendChild(allPill);
+
+  sections.forEach(function (sec) {
+    var b = document.createElement('button');
+    b.className = 'pill';
+    b.textContent = sec.querySelector('h2').textContent.replace(/^\d+\.\s*/, '');
+    b.dataset.s = sec.dataset.s;
+    b.setAttribute('aria-pressed', 'false');
+    b.onclick = function () { setSection(activeSection === sec.dataset.s ? null : sec.dataset.s); };
+    pills.appendChild(b);
+  });
+
+  function setSection(s) {
+    activeSection = s;
+    Array.prototype.forEach.call(pills.children, function (b) {
+      b.setAttribute('aria-pressed', String((b.dataset.s || null) === s));
+    });
+    apply();
+  }
+
+  function apply() {
+    var term = norm(q.value.trim());
+    var shown = 0;
+
+    entries.forEach(function (e) {
+      var okS = !activeSection || e.dataset.s === activeSection;
+      var okQ = !term || e._txt.indexOf(term) !== -1;
+      var ok = okS && okQ;
+      e.classList.toggle('hide', !ok);
+      if (ok) shown++;
+    });
+
+    sections.forEach(function (sec) {
+      var any = sec.querySelector('.e:not(.hide)');
+      sec.classList.toggle('hide', !any);
+    });
+
+    empty.classList.toggle('hide', shown > 0);
+    var total = entries.length;
+    count.textContent = (shown === total)
+      ? (total + ' verbetes')
+      : (shown + ' de ' + total + ' verbetes');
+  }
+
+  q.addEventListener('input', apply);
+  q.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { q.value = ''; apply(); }
+  });
+
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === '/' && document.activeElement !== q) {
+      ev.preventDefault();
+      q.focus();
+      q.select();
+    }
+  });
+
+  // um link cruzado precisa revelar o destino, mesmo se estiver filtrado
+  document.addEventListener('click', function (ev) {
+    var a = ev.target.closest && ev.target.closest('a.x, a.self');
+    if (!a) return;
+    var id = a.getAttribute('href');
+    if (!id || id.charAt(0) !== '#') return;
+    var target = document.getElementById(id.slice(1));
+    if (!target) return;
+    if (target.classList.contains('hide') || (target.closest('section') || {}).classList && target.closest('section').classList.contains('hide')) {
+      q.value = '';
+      setSection(null);
+    }
+  });
+
+  function flash() {
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el || !el.classList.contains('e')) return;
+    el.classList.add('flash');
+    setTimeout(function () { el.classList.remove('flash'); }, 1600);
+  }
+  window.addEventListener('hashchange', flash);
+
+  // tema: segue o sistema por padrão; o botão força claro ou escuro e lembra.
+  // localStorage pode lançar (janela privativa, site data bloqueado), daí o try.
+  var root = document.documentElement;
+  var btn = document.getElementById('theme');
+
+  function readPref() {
+    try { return localStorage.getItem('tema'); } catch (err) { return null; }
+  }
+  function writePref(v) {
+    try { v ? localStorage.setItem('tema', v) : localStorage.removeItem('tema'); }
+    catch (err) { /* sem persistência; a página segue funcionando */ }
+  }
+  function applyTheme(v) {
+    if (v) root.setAttribute('data-theme', v);
+    else root.removeAttribute('data-theme');
+    btn.title = v === 'dark' ? 'Tema escuro (clique para seguir o sistema)'
+              : v === 'light' ? 'Tema claro (clique para escuro)'
+              : 'Seguindo o sistema (clique para claro)';
+  }
+
+  applyTheme(readPref());
+
+  btn.addEventListener('click', function () {
+    var atual = root.getAttribute('data-theme');
+    var proximo = atual === 'light' ? 'dark' : atual === 'dark' ? null : 'light';
+    writePref(proximo);
+    applyTheme(proximo);
+  });
+
+  apply();
+  flash();
+})();
+</script>

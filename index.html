@@ -146,6 +146,24 @@
     color: var(--accent); background: var(--accent-soft);
     padding: 2px 7px; border-radius: 4px; white-space: nowrap;
   }
+  /* marcador de verbete com mais de um sentido */
+  .t2 {
+    font-family: var(--mono); font-size: .7rem; font-weight: 400;
+    color: var(--fg-soft); border: 1px dashed var(--line);
+    padding: 1px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  /* cada sentido de um verbete ambíguo */
+  .sense {
+    border-left: 3px solid var(--line);
+    padding: 2px 0 2px 14px; margin: 10px 0;
+  }
+  .sense > .lbl {
+    display: block; font-family: var(--mono); font-size: .74rem;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--fg-faint); margin-bottom: 2px;
+  }
+  .sense:hover { border-left-color: var(--accent); }
+
   .e p { margin: 0 0 8px; }
   .e p:last-child { margin-bottom: 0; }
   .e ul { margin: 6px 0 8px; padding-left: 20px; }
@@ -221,7 +239,7 @@
     <li><code>prát.</code> prática</li>
     <li><code>pad.</code> padrão ou norma</li>
   </ul>
-  <p>Termos <a class="x" href="#repo">sublinhados em pontilhado</a> levam ao próprio verbete.</p>
+  <p>Termos <a class="x" href="#repo">sublinhados em pontilhado</a> levam ao próprio verbete. O selo <span class="t2">2 sentidos</span> marca palavra que significa coisas diferentes conforme o contexto — os dois vêm listados, porque o engano costuma ser justamente supor que só há um.</p>
 </div>
 
 <div id="empty" class="hide">Nenhum verbete encontrado.</div>
@@ -243,13 +261,28 @@
 </article>
 
 <article class="e" id="commit" data-s="git">
-  <h3><a class="self" href="#commit">Commit</a> <span class="t">conc.</span></h3>
-  <p>Uma foto do projeto num instante, com mensagem explicando a mudança. É a unidade do histórico: tudo em <a class="x" href="#git">Git</a> — reverter, comparar, ramificar — opera sobre commits.</p>
+  <h3><a class="self" href="#commit">Commit</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · versionamento</span>
+    <p>Uma foto do projeto num instante, com mensagem explicando a mudança. É a unidade do histórico: tudo em <a class="x" href="#git">Git</a> — reverter, comparar, ramificar — opera sobre commits.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · banco de dados</span>
+    <p>Confirmar uma <strong>transação</strong>: até o <code>COMMIT</code>, as mudanças são provisórias e invisíveis para os outros; depois dele, são definitivas. O oposto é <code>ROLLBACK</code>, que desfaz tudo. É o que garante que duas operações aconteçam <em>ambas ou nenhuma</em> — daí <a class="x" href="#delta">Delta Lake</a> existir para dar isso a arquivos soltos.</p>
+  </div>
+  <p class="note">Os dois sentidos partilham a ideia de “tornar definitivo o que estava em rascunho”, e nasceram independentes.</p>
 </article>
 
 <article class="e" id="branch" data-s="git">
-  <h3><a class="self" href="#branch">Branch</a> <span class="t">conc.</span></h3>
-  <p>Uma linha paralela de <a class="x" href="#commit">commits</a>. Serve para trabalhar numa versão alternativa sem afetar a principal (<code>main</code>). Juntar de volta é o <a class="x" href="#merge">merge</a>.</p>
+  <h3><a class="self" href="#branch">Branch</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · versionamento</span>
+    <p>Uma linha paralela de <a class="x" href="#commit">commits</a>. Serve para trabalhar numa versão alternativa sem afetar a principal (<code>main</code>). Juntar de volta é o <a class="x" href="#merge">merge</a>.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · banco de dados</span>
+    <p>Uma cópia temporária do banco — esquema e dados — para testar uma mudança sem tocar em produção, com <code>merge</code> depois. O <a class="x" href="#supabase">Supabase</a> tem isso. A metáfora é a mesma do <a class="x" href="#git">Git</a>, mas o que se ramifica é o <strong>banco</strong>, não o código.</p>
+  </div>
 </article>
 
 <article class="e" id="merge" data-s="git">
@@ -354,6 +387,16 @@ dist/
   </ul>
 </article>
 
+<article class="e" id="ssh" data-s="cli">
+  <h3><a class="self" href="#ssh">SSH</a> <span class="t">prot.</span></h3>
+  <p><em>Secure Shell</em>: o protocolo para abrir um <a class="x" href="#shell">shell</a> numa máquina remota, com o tráfego criptografado. É como se administra um <a class="x" href="#vps">VPS</a>.</p>
+  <pre><code>ssh usuario@203.0.113.10</code></pre>
+  <p>A partir daí, <a class="x" href="#ls">ls</a>, <a class="x" href="#cat">cat</a> e tudo mais rodam <em>lá</em>, e você vê a saída aqui. Serve também para copiar arquivos (<code>scp</code>, <code>rsync</code>) e para túneis.</p>
+  <p><strong>Autenticação por chave, não por senha.</strong> Você gera um par: a <strong>privada</strong> fica na sua máquina e nunca sai; a <strong>pública</strong> vai para o servidor. Quem tiver a privada entra — por isso ela é protegida por <em>passphrase</em>, e por isso senha via SSH costuma ser desabilitada. É a mesma lógica do <a class="x" href="#mtls">mTLS</a>: provar identidade com chave, não com segredo compartilhado.</p>
+  <p>O <a class="x" href="#git">Git</a> usa SSH como uma das formas de falar com o <a class="x" href="#remote">remote</a> — daí URLs no formato <code>git@github.com:usuario/repo.git</code>, alternativa ao HTTPS.</p>
+  <p class="note">SSH e <a class="x" href="#tls">SSL/TLS</a> são coisas diferentes, apesar das siglas parecidas: ambos criptografam, mas SSH é acesso remoto a máquina e tem seu próprio sistema de confiança — sem autoridade certificadora. Daí o aviso de “host key” na primeira conexão: você é quem confirma.</p>
+</article>
+
 <article class="e" id="cron" data-s="cli">
   <h3><a class="self" href="#cron">Cron</a> <span class="t">ferr.</span></h3>
   <p>Agendador de tarefas, e por extensão a sintaxe dele: cinco campos — minuto, hora, dia, mês, dia da semana. <code>0 3 * * *</code> é “todo dia às 3h”.</p>
@@ -403,6 +446,7 @@ export { minhaFuncao };</code></pre>
 <article class="e" id="node" data-s="ling">
   <h3><a class="self" href="#node">Node.js</a> <span class="t">ferr.</span></h3>
   <p>O motor que roda <a class="x" href="#javascript">JavaScript</a> <strong>fora</strong> do navegador. É o que permite JS no servidor, e é o que executa <a class="x" href="#npm">npm</a>, o <a class="x" href="#build">build</a> do <a class="x" href="#vite">Vite</a> e o <a class="x" href="#nextjs">Next.js</a>. Quando um projeto pede “Node 20”, é a versão desse motor.</p>
+  <p class="note">Não confundir com <strong>nó</strong> (<em>node</em>) no sentido de elemento de uma árvore ou grafo — “um nó do <a class="x" href="#dom">DOM</a>”, “um nó do cluster”. Mesma palavra em inglês, assunto diferente.</p>
 </article>
 
 <article class="e" id="npm" data-s="ling">
@@ -452,14 +496,20 @@ export { minhaFuncao };</code></pre>
 </article>
 
 <article class="e" id="box-model" data-s="web">
-  <h3><a class="self" href="#box-model">Box model (padding, margin)</a> <span class="t">conc.</span></h3>
-  <p>Em <a class="x" href="#css">CSS</a>, todo elemento é uma caixa com quatro anéis: conteúdo, <strong>padding</strong>, borda e <strong>margin</strong>.</p>
-  <ul>
-    <li><strong>padding</strong> — espaço por <em>dentro</em> da borda. É o que dá respiro a um botão.</li>
-    <li><strong>margin</strong> — espaço por <em>fora</em>. Afasta o elemento dos vizinhos.</li>
-  </ul>
-  <p>Quase todo layout torto é um destes trocado pelo outro. No <a class="x" href="#tailwind">Tailwind</a>: <code>p-6</code> é padding, <code>m-6</code> é margin.</p>
-  <p class="note">A palavra <em>padding</em> também existe em criptografia, com sentido não relacionado: completar um bloco até o tamanho exigido pelo algoritmo.</p>
+  <h3><a class="self" href="#box-model">Padding (e box model)</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · layout (CSS)</span>
+    <p>Em <a class="x" href="#css">CSS</a>, todo elemento é uma caixa com quatro anéis: conteúdo, <strong>padding</strong>, borda e <strong>margin</strong>.</p>
+    <ul>
+      <li><strong>padding</strong> — espaço por <em>dentro</em> da borda. É o que dá respiro a um botão.</li>
+      <li><strong>margin</strong> — espaço por <em>fora</em>. Afasta o elemento dos vizinhos.</li>
+    </ul>
+    <p>Quase todo layout torto é um destes trocado pelo outro. No <a class="x" href="#tailwind">Tailwind</a>: <code>p-6</code> é padding, <code>m-6</code> é margin.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · criptografia</span>
+    <p>Completar uma mensagem com bytes extras até o tamanho de bloco exigido pelo algoritmo. Sentido não relacionado ao primeiro — mas é o que aparece em mensagens como <code>padding error</code> ao manipular <a class="x" href="#certificado">certificados</a>, e que faria procurar no lugar errado.</p>
+  </div>
 </article>
 
 <article class="e" id="dom" data-s="web">
@@ -514,6 +564,7 @@ export { minhaFuncao };</code></pre>
     <li>escrever a saída em <a class="x" href="#dist">dist/</a></li>
   </ul>
   <p>Um projeto <strong>sem build</strong> é aquele em que o arquivo que você escreve já é o arquivo que roda. Não confundir com <a class="x" href="#deploy">deploy</a>, que é publicar o resultado.</p>
+  <p class="note">A palavra serve de verbo e de substantivo: “rodar o build” é a etapa; “o build de ontem quebrou” é o <em>resultado</em> daquela execução — o conteúdo do <a class="x" href="#dist">dist/</a>. O contexto separa.</p>
 </article>
 
 <article class="e" id="transpilar" data-s="build">
@@ -592,9 +643,17 @@ export { minhaFuncao };</code></pre>
 </article>
 
 <article class="e" id="csr" data-s="render">
-  <h3><a class="self" href="#csr">CSR</a> <span class="t">conc.</span></h3>
-  <p><em>Client-Side Rendering.</em> O servidor manda um HTML praticamente vazio (<code>&lt;div id="root"&gt;&lt;/div&gt;</code>) mais um <a class="x" href="#bundle">bundle</a>; o navegador executa, busca os dados e desenha. É o modelo do <a class="x" href="#vite">Vite</a> + <a class="x" href="#react">React</a>, e produz uma <a class="x" href="#spa">SPA</a>.</p>
-  <p>Note que os <em>arquivos</em> continuam estáticos — o que é dinâmico é o conteúdo. Custo: primeira tela em branco, <a class="x" href="#seo">SEO</a> prejudicado e <a class="x" href="#open-graph">cards de compartilhamento</a> vazios.</p>
+  <h3><a class="self" href="#csr">CSR</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · renderização</span>
+    <p><em>Client-Side Rendering.</em> O servidor manda um HTML praticamente vazio (<code>&lt;div id="root"&gt;&lt;/div&gt;</code>) mais um <a class="x" href="#bundle">bundle</a>; o navegador executa, busca os dados e desenha. É o modelo do <a class="x" href="#vite">Vite</a> + <a class="x" href="#react">React</a>, e produz uma <a class="x" href="#spa">SPA</a>.</p>
+    <p>Note que os <em>arquivos</em> continuam estáticos — o que é dinâmico é o conteúdo. Custo: primeira tela em branco, <a class="x" href="#seo">SEO</a> prejudicado e <a class="x" href="#open-graph">cards de compartilhamento</a> vazios.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · certificados</span>
+    <p><em>Certificate Signing Request.</em> O arquivo que você gera para <strong>pedir</strong> um certificado a uma autoridade: contém a chave pública e a identidade, assinado pela chave privada — que não vai junto e não sai do seu lado. Ver <a class="x" href="#tls">TLS</a> e <a class="x" href="#openssl">OpenSSL</a>.</p>
+  </div>
+  <p class="note">Colisão infeliz, e os dois sentidos convivem no mesmo projeto: um artigo sobre “CSR” pode estar falando de front-end ou de infraestrutura. O contexto separa — renderização ou certificado.</p>
 </article>
 
 <article class="e" id="ssr" data-s="render">
@@ -665,6 +724,15 @@ export { minhaFuncao };</code></pre>
   <p class="note">Cuidado com um mal-entendido comum: trabalho agendado <em>funciona</em> em serverless — o <a class="x" href="#cron">cron</a> está fora e chama a função. O que não funciona é guardar estado entre invocações. Ver <a class="x" href="#stateless">stateless</a>.</p>
 </article>
 
+<article class="e" id="edge-function" data-s="infra">
+  <h3><a class="self" href="#edge-function">Edge function</a> <span class="t">conc.</span></h3>
+  <p>Uma função <a class="x" href="#serverless">serverless</a> que roda na <strong>borda</strong> da rede — no ponto da <a class="x" href="#cdn">CDN</a> mais próximo de quem chamou — em vez de numa única região. Ganha latência: a função executa a 30 ms do usuário, não a 200 ms.</p>
+  <p><strong>Borda</strong> (<em>edge</em>) é o termo geral para “o mais perto possível de quem acessa”. A mesma ideia que faz a CDN servir arquivos rápido, aplicada a código.</p>
+  <p>O preço é um ambiente mais restrito que o de um servidor comum: tempo de execução curto, menos memória, e um subconjunto das bibliotecas — várias que dependem de recursos de sistema não funcionam. E, sendo serverless, herda tudo daquele modelo: <a class="x" href="#stateless">nada persiste entre chamadas</a>, <a class="x" href="#cold-start">cold start</a>, e nenhum acesso à camada de <a class="x" href="#socket">socket</a>.</p>
+  <p class="note">Onde aparece: Edge Functions do <a class="x" href="#supabase">Supabase</a> (Deno), Edge Functions da <a class="x" href="#vercel">Vercel</a>, Cloudflare Workers. São bons para autenticação, redirecionamento, personalização leve e <a class="x" href="#webhook">webhook</a> — e ruins para trabalho longo ou que precise de <a class="x" href="#processo">processo</a>.</p>
+  <p class="note"><strong>Medir antes de supor:</strong> é comum ouvir que esse ambiente “não fala com a internet”. Vale testar com mais de um destino antes de aceitar — um destino que falha não prova “qualquer destino”. Ver <a class="x" href="#medir">medir antes de afirmar</a>.</p>
+</article>
+
 <article class="e" id="cold-start" data-s="infra">
   <h3><a class="self" href="#cold-start">Cold start</a> <span class="t">conc.</span></h3>
   <p>O atraso da primeira chamada a uma função <a class="x" href="#serverless">serverless</a> depois de um período parado: a plataforma precisa carregar o ambiente antes de executar. As seguintes são rápidas, enquanto a instância seguir viva.</p>
@@ -684,12 +752,23 @@ export { minhaFuncao };</code></pre>
 </article>
 
 <article class="e" id="worker" data-s="infra">
-  <h3><a class="self" href="#worker">Worker</a> <span class="t">conc.</span></h3>
-  <p>Um <a class="x" href="#processo">processo</a> que <strong>não escuta porta nenhuma e não tem URL</strong>: fica ligado consumindo uma <a class="x" href="#fila">fila</a>. Distingue-se do <em>web service</em>, que recebe <a class="x" href="#http">HTTP</a> e responde.</p>
-  <pre><code>usuário → web service → põe na fila → responde "recebi" na hora
+  <h3><a class="self" href="#worker">Worker</a> <span class="t">conc.</span> <span class="t2">3 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · servidor (modo worker)</span>
+    <p>Um <a class="x" href="#processo">processo</a> que <strong>não escuta porta nenhuma e não tem URL</strong>: fica ligado consumindo uma <a class="x" href="#fila">fila</a>. Distingue-se do <em>web service</em>, que recebe <a class="x" href="#http">HTTP</a> e responde.</p>
+    <pre><code>usuário → web service → põe na fila → responde "recebi" na hora
                             ↓
                        worker processa devagar, grava o resultado</code></pre>
-  <p>Existe porque o usuário não pode esperar três minutos numa requisição HTTP.</p>
+    <p>Existe porque o usuário não pode esperar três minutos numa requisição HTTP.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · navegador (Web Worker)</span>
+    <p>Um script que roda numa thread separada, para não travar a interface enquanto processa algo pesado. Não enxerga o <a class="x" href="#dom">DOM</a> — comunica-se com a página por mensagens. O <em>Service Worker</em> é um primo que intercepta requisições e viabiliza funcionamento offline; é a peça central do <a class="x" href="#mv3">MV3</a>.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">3 · plataforma (Cloudflare Workers)</span>
+    <p>Nome comercial de um produto <a class="x" href="#serverless">serverless</a> — que, apesar do nome, é o <strong>oposto</strong> do sentido 1: acorda por requisição e morre. Confusão fácil, e cara, ao escolher onde hospedar um <a class="x" href="#processo">processo</a>.</p>
+  </div>
 </article>
 
 <article class="e" id="fila" data-s="infra">
@@ -773,7 +852,7 @@ export { minhaFuncao };</code></pre>
 </article>
 
 <article class="e" id="delta" data-s="dados">
-  <h3><a class="self" href="#delta">Delta format</a> <span class="t">form.</span></h3>
+  <h3><a class="self" href="#delta">Delta format</a> <span class="t">form.</span> <span class="t2">2 sentidos</span></h3>
   <p>Depende do contexto, e valem os dois sentidos.</p>
   <p><strong>Delta Lake</strong>: um monte de arquivos <a class="x" href="#parquet">Parquet</a> mais um log de transações dizendo quais deles formam a versão atual da tabela. O Parquet guarda os dados; o log acrescenta transação, <code>UPDATE</code>/<code>DELETE</code> e histórico.</p>
   <p><strong>Delta genérico</strong>: guardar só a <em>diferença</em> em vez do estado inteiro — é o que o <a class="x" href="#git">Git</a> faz, e o que uma <a class="x" href="#api">API</a> faz em “sincronização incremental”. O fio comum: <em>delta</em> é a mudança, não o todo.</p>
@@ -788,6 +867,9 @@ export { minhaFuncao };</code></pre>
 <article class="e" id="api" data-s="rede">
   <h3><a class="self" href="#api">API</a> <span class="t">conc.</span></h3>
   <p><em>Application Programming Interface</em>: o conjunto de operações que um sistema oferece para <strong>outro programa</strong> usar. Não é tela, é contrato.</p>
+  <p>O termo é amplo — uma biblioteca tem API sem rede nenhuma envolvida. Quando se diz “a API do sistema X”, quase sempre se fala da fatia que acontece por rede, sobre <a class="x" href="#http">HTTP</a>. E aí ainda há uma escolha de <strong>estilo</strong>:</p>
+  <pre><code>API  ⊃  API web  ⊃  { REST, GraphQL, gRPC, tRPC, SOAP, … }</code></pre>
+  <p><a class="x" href="#rest">REST</a> é um desses estilos, não sinônimo de API nem um protocolo à parte: é uma convenção sobre como usar o HTTP que já existe. Ver <a class="x" href="#graphql">GraphQL / gRPC</a>.</p>
 </article>
 
 <article class="e" id="http" data-s="rede">
@@ -797,15 +879,22 @@ export { minhaFuncao };</code></pre>
 </article>
 
 <article class="e" id="rest" data-s="rede">
-  <h3><a class="self" href="#rest">REST</a> <span class="t">pad.</span></h3>
-  <p>Sim, é sigla — <strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer —, e ela não ajuda: veio de uma tese de doutorado de 2000 e descreve mal o que se faz com o termo hoje. (O sentido original: o que trafega não é o objeto, é uma <em>representação</em> do estado dele, num formato como <a class="x" href="#json">JSON</a>.)</p>
-  <p>Na prática, “API REST” quer dizer apenas: <strong>uma <a class="x" href="#api">API</a> sobre <a class="x" href="#http">HTTP</a> em que a URL identifica uma coisa e o verbo diz o que fazer com ela</strong>.</p>
+  <h3><a class="self" href="#rest">REST</a> <span class="t">pad.</span> <span class="t2">2 sentidos</span></h3>
+  <p>Sim, é sigla — <strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer —, e ela não ajuda. É um <strong>estilo</strong> de <a class="x" href="#api">API</a>, um entre vários, e a palavra é usada em dois sentidos bem diferentes:</p>
+  <div class="sense">
+    <span class="lbl">1 · o sentido estrito</span>
+    <p>O da tese de doutorado de Roy Fielding, de 2000: um conjunto de restrições arquiteturais, entre elas a <em>hipermídia</em> — a resposta deve dizer ao cliente quais ações são possíveis a seguir, como links numa página. O que trafega não é o objeto, é uma <em>representação</em> do estado dele. Quase ninguém implementa isso.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · o sentido corrente</span>
+    <p>O que “API REST” significa na prática, em 2026: <strong>uma API sobre <a class="x" href="#http">HTTP</a> em que a URL identifica uma coisa e o verbo diz o que fazer com ela</strong>, trocando <a class="x" href="#json">JSON</a>. É este que você vai encontrar.</p>
+  </div>
   <pre><code>GET    /receitas/482   → me dá
 PATCH  /receitas/482   → altera
 DELETE /receitas/482   → apaga
 POST   /receitas       → cria</code></pre>
   <p>O contraste é com o que existia antes — tudo <code>POST</code>, a ação escondida num parâmetro (<code>?action=deleteRecipe</code>), cada API com suas convenções. REST padronizou: o verbo já está no HTTP, use-o. Daí sair de graça o cache e o fato de você adivinhar uma API que nunca viu. Mapeia no <a class="x" href="#crud">CRUD</a>.</p>
-  <p class="note">Quase nenhuma API dita REST é REST no sentido estrito — a tese exige coisas que ninguém implementa. A comunidade usa o termo para o padrão prático acima.</p>
+  <p class="note">Daí uma discussão recorrente e pouco útil: alguém aponta que sua API “não é REST de verdade”. No sentido 1, quase nenhuma é.</p>
 </article>
 
 <article class="e" id="postgrest" data-s="rede">
@@ -825,7 +914,7 @@ POST   /receitas       → cria</code></pre>
 </article>
 
 <article class="e" id="hook" data-s="rede">
-  <h3><a class="self" href="#hook">Hook</a> <span class="t">conc.</span></h3>
+  <h3><a class="self" href="#hook">Hook</a> <span class="t">conc.</span> <span class="t2">3 sentidos</span></h3>
   <p>“Gancho”: um ponto onde o sistema chama um código seu automaticamente quando algo acontece. Três usos bem diferentes:</p>
   <ul>
     <li><strong>Git hook</strong> — script que roda antes do <a class="x" href="#commit">commit</a>, por exemplo para rodar <a class="x" href="#lint">lint</a>.</li>
@@ -905,15 +994,31 @@ POST   /receitas       → cria</code></pre>
 </article>
 
 <article class="e" id="handshake" data-s="seg">
-  <h3><a class="self" href="#handshake">Handshake</a> <span class="t">conc.</span></h3>
-  <p>“Aperto de mão”: a negociação inicial de uma conexão, antes de qualquer dado útil. No <a class="x" href="#tls">TLS</a> é onde se acerta a versão do protocolo, o algoritmo de criptografia, se verifica o certificado do servidor (e, em <a class="x" href="#mtls">mTLS</a>, o do cliente) e se estabelece a chave da sessão.</p>
-  <p>É a etapa que custa tempo, e o motivo de reaproveitar conexões importar. Erros de certificado aparecem aqui — antes de existir requisição.</p>
+  <h3><a class="self" href="#handshake">Handshake</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <p>“Aperto de mão”: a negociação inicial de uma conexão, antes de qualquer dado útil. São <strong>dois</strong>, em camadas, e acontecem nesta ordem:</p>
+  <div class="sense">
+    <span class="lbl">1 · TCP</span>
+    <p>O de três passos (<em>SYN, SYN-ACK, ACK</em>) que estabelece a conexão bruta entre duas máquinas. É a base de todo <a class="x" href="#socket">socket</a>, e onde falham problemas de rede, porta fechada ou firewall.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · TLS</span>
+    <p>Em cima do anterior: acerta a versão do protocolo e o algoritmo de criptografia, verifica o certificado do servidor (e, em <a class="x" href="#mtls">mTLS</a>, o do cliente) e estabelece a chave da sessão. Ver <a class="x" href="#tls">TLS</a>.</p>
+  </div>
+  <p>Distinguir os dois é diagnóstico puro: <em>connection refused</em> é o primeiro; erro de certificado é o segundo — e ambos acontecem antes de existir requisição <a class="x" href="#http">HTTP</a>. É também a etapa que custa tempo, e o motivo de reaproveitar conexões importar.</p>
 </article>
 
 <article class="e" id="token" data-s="seg">
-  <h3><a class="self" href="#token">Token</a> <span class="t">conc.</span></h3>
-  <p>Uma referência opaca que substitui um dado sensível. O caso clássico é o cartão de crédito: o número vai do navegador direto ao processador de pagamento, e o que volta para você é um token que só serve para cobrar naquela conta — e não vale nada se vazar. Ver <a class="x" href="#pci">PCI DSS</a>.</p>
-  <p>Também se usa para credenciais de acesso (um <em>token</em> de sessão ou de API), com a mesma ideia: algo revogável e de escopo limitado, em vez da senha real.</p>
+  <h3><a class="self" href="#token">Token</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <div class="sense">
+    <span class="lbl">1 · segurança</span>
+    <p>Uma referência opaca que substitui um dado sensível. O caso clássico é o cartão de crédito: o número vai do navegador direto ao processador de pagamento, e o que volta para você é um token que só serve para cobrar naquela conta — e não vale nada se vazar. Ver <a class="x" href="#pci">PCI DSS</a>.</p>
+    <p>Também se usa para credenciais de acesso (token de sessão ou de API), com a mesma ideia: algo revogável e de escopo limitado, em vez da senha real.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · modelos de linguagem</span>
+    <p>A unidade em que uma IA lê e escreve: um pedaço de palavra, não uma letra nem uma palavra inteira. “Glossário” pode ser dois ou três tokens; em português eles rendem menos que em inglês. É a unidade de cobrança das APIs de IA e a medida da <em>janela de contexto</em> — quanto o modelo consegue considerar de uma vez.</p>
+  </div>
+  <p class="note">Um terceiro sentido existe em compiladores: o <a class="x" href="#parser">parser</a> quebra o código em tokens antes de entendê-lo. Os três compartilham a ideia de “unidade mínima que representa outra coisa”.</p>
 </article>
 
 <article class="e" id="pci" data-s="seg">

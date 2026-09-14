@@ -29,6 +29,11 @@ que envelhecem.
   filtro é limpo automaticamente.
 - **Classe do verbete** — `ling.`, `prot.`, `ferr.`, `conc.`… — no lugar do
   `s.m.`/`adj.` dos dicionários. A legenda está no topo da página.
+- **Sentidos múltiplos**: quando a mesma palavra significa coisas diferentes
+  conforme o contexto, o verbete traz o selo `2 sentidos` e lista os dois lado a
+  lado — `CSR` (renderização / certificado), `token` (segurança / IA),
+  `worker` (três sentidos, um deles o oposto do outro), `commit`, `branch`,
+  `handshake`, `padding`, `hook`, `delta`, `REST`.
 - **Tema claro e escuro**, seguindo a preferência do sistema, com botão para
   forçar um dos dois.
 - Cada verbete tem **âncora própria** (`#parquet`, `#mtls`), então dá para

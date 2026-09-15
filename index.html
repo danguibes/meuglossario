@@ -963,6 +963,26 @@ POST   /receitas       → cria</code></pre>
   <p>Cabeçalho <a class="x" href="#http">HTTP</a> em que o cliente diz quem é — navegador, robô, ou o que ele quiser alegar. Serviços usam isso para liberar ou bloquear.</p>
   <p>Pode virar incompatibilidade real: um mesmo sistema pode precisar de um User-Agent de navegador para um destino e ser <em>recusado</em> por ele em outro. Testa-se com <code>curl -A</code>. Ver <a class="x" href="#curl">curl</a>.</p>
 </article>
+
+<article class="e" id="proxy" data-s="rede">
+  <h3><a class="self" href="#proxy">Proxy</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <p>Um intermediário por onde a conexão passa. O nome é o mesmo para duas coisas que ficam em lados opostos.</p>
+  <div class="sense">
+    <span class="lbl">1 · de saída (forward)</span>
+    <p>Fica do lado do <strong>cliente</strong> e fala com a internet em nome dele. É o que o navegador usa quando se configura “proxy” nas opções ou por <a class="x" href="#pac">PAC</a>. Para HTTPS, o navegador manda <code>CONNECT host:443</code> e o proxy vira um túnel cego — ele sabe <em>para onde</em>, não <em>o quê</em>. Só vê o conteúdo se fizer <a class="x" href="#tls-bridging">bridging</a>.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · reverso</span>
+    <p>Fica do lado do <strong>servidor</strong> e recebe em nome dele: nginx na frente de uma aplicação, o <a class="x" href="#cdn">CDN</a> na frente do site, a <a class="x" href="#vercel">Vercel</a> na frente da sua função. O cliente nem sabe que ele existe.</p>
+  </div>
+  <p class="note">Um proxy de saída pode <strong>autenticar</strong> quem o usa: responde <code>407 Proxy Authentication Required</code> e o cliente reenvia com <code>Proxy-Authorization</code>. Uma extensão de Chrome preenche isso sozinha por <code>onAuthRequired</code>. Se o PAC apontar para <code>HTTPS proxy:443</code> em vez de <code>PROXY</code>, o próprio CONNECT vai cifrado.</p>
+</article>
+
+<article class="e" id="pac" data-s="rede">
+  <h3><a class="self" href="#pac">PAC</a> <span class="t">arq.</span></h3>
+  <p><em>Proxy Auto-Config</em>: um arquivo JavaScript de uma função só, <code>FindProxyForURL(url, host)</code>, que o navegador chama <strong>a cada requisição</strong> para decidir se ela vai direto (<code>DIRECT</code>) ou por um <a class="x" href="#proxy">proxy</a> (<code>PROXY host:porta</code> ou <code>HTTPS host:porta</code>). É o jeito de rotear só alguns domínios por um proxy e deixar o resto em paz.</p>
+  <p>“Instalar” um PAC é dizer ao navegador onde ele está — nas configurações do sistema, por política de empresa, ou por uma extensão com a permissão <code>proxy</code>, que o entrega por <code>chrome.proxy.settings.set</code>. Neste último caso, o PAC pode ser gerado por pessoa e trocado a qualquer momento sem ninguém instalar nada: a extensão baixa a lista, monta a função, aplica. É configuração do navegador, não do computador — outro navegador, outro perfil ou outra máquina não o veem.</p>
+</article>
 </section>
 
 <!-- ============================================================ -->
@@ -1044,6 +1064,56 @@ POST   /receitas       → cria</code></pre>
   <p><em>Payment Card Industry Data Security Standard</em>: a norma que as bandeiras impõem a quem toca dados de cartão. Não é lei, é contrato — descumprir custa multa e, no limite, o direito de aceitar cartão. Exige rede segmentada, criptografia, log de tudo, varredura trimestral e auditoria: um programa contínuo.</p>
   <p><strong>A conclusão prática é uma só: você não quer estar no escopo.</strong> Basta que o número do cartão nunca toque seu servidor — usando o formulário hospedado do provedor (um <code>iframe</code> dele, ou redirecionamento) e recebendo de volta um <a class="x" href="#token">token</a>.</p>
   <p class="note">O jeito de estragar é específico: construir o próprio formulário de cartão e mandar os dados ao seu back-end. Nesse instante você entra no escopo inteiro.</p>
+</article>
+
+<article class="e" id="ca" data-s="seg">
+  <h3><a class="self" href="#ca">CA</a> <span class="t">conc.</span> <span class="t2">2 sentidos</span></h3>
+  <p><em>Certificate Authority</em>, autoridade certificadora: quem assina certificados e, com isso, garante que aquela chave pública pertence àquele nome. Confiar numa CA é confiar em tudo que ela assinar.</p>
+  <div class="sense">
+    <span class="lbl">1 · pública</span>
+    <p>Let's Encrypt, DigiCert, GlobalSign — e, no Brasil, as credenciadas na ICP-Brasil (Serasa, Certisign, Soluti). Já vêm na lista de confiança de todo navegador e sistema operacional, o <a class="x" href="#trust-store">trust store</a>. É por isso que um site com certificado delas abre sem aviso.</p>
+  </div>
+  <div class="sense">
+    <span class="lbl">2 · interna</span>
+    <p>Uma CA criada por você, com <a class="x" href="#openssl">openssl</a>, que só vale onde você a instalar. Serve para redes de empresa, ambientes de teste e para um <a class="x" href="#proxy">proxy</a> que faz <a class="x" href="#tls-bridging">bridging</a>. Instalá-la numa máquina é dar a quem tem a chave dela o poder de se passar por qualquer site — a menos que o certificado da CA traga <em>name constraints</em>, que limitam os domínios para os quais ela pode emitir.</p>
+  </div>
+</article>
+
+<article class="e" id="trust-store" data-s="seg">
+  <h3><a class="self" href="#trust-store">Trust store</a> <span class="t">conc.</span></h3>
+  <p>A lista de <a class="x" href="#ca">CAs</a> em que um programa confia. Não é uma só por máquina: o Windows tem a dele (e o Chrome e o Edge a usam), o Firefox tem a própria, o Java tem o <code>cacerts</code>, e o Node traz a da Mozilla embutida — no Node 24, <code>--use-system-ca</code> faz ele usar a do sistema.</p>
+  <p>Consequência prática: “instalar a CA” significa acrescentá-la a <strong>uma</strong> dessas listas. No Windows, <code>certutil -user -addstore Root ca.pem</code> faz isso para o usuário atual, sem administrador; sem <code>-user</code>, para a máquina inteira. Cada programa com lista própria é um passo de instalação a mais. Ver <a class="x" href="#certificado-folha">certificado folha</a>.</p>
+</article>
+
+<article class="e" id="cadeia" data-s="seg">
+  <h3><a class="self" href="#cadeia">Cadeia de certificação</a> <span class="t">conc.</span></h3>
+  <p>Ninguém confia direto no certificado de um site. Confia-se numa <a class="x" href="#ca">CA raiz</a>, que assina uma CA <strong>intermediária</strong>, que assina o certificado do site — o <a class="x" href="#certificado-folha">folha</a>. Validar é percorrer essa corrente até chegar numa raiz que esteja no <a class="x" href="#trust-store">trust store</a>.</p>
+  <p>O servidor deve mandar a cadeia inteira, menos a raiz. Quando manda só a folha, o navegador ainda abre a página, porque busca o intermediário sozinho pelo <a class="x" href="#aia">AIA</a>; um programa que use OpenSSL não busca, e falha com <em>unable to verify the first certificate</em>. O <code>openssl s_client</code> mostra a cadeia recebida nas linhas <code>s:</code> (sujeito) e <code>i:</code> (emissor).</p>
+</article>
+
+<article class="e" id="certificado-folha" data-s="seg">
+  <h3><a class="self" href="#certificado-folha">Certificado folha</a> <span class="t">conc.</span></h3>
+  <p><em>Leaf certificate</em>: o último elo da <a class="x" href="#cadeia">cadeia</a>, o certificado do site em si (ou da pessoa, ou da empresa). É o único que <strong>não</strong> assina outros — a árvore termina nele, daí o nome. Todo o resto acima dele é <a class="x" href="#ca">CA</a>.</p>
+  <p>Num <a class="x" href="#proxy">proxy</a> de <a class="x" href="#tls-bridging">bridging</a>, é o que se emite na hora, um por domínio, assinado pela CA interna: precisa trazer o nome do site em <code>subjectAltName</code>, ou o Chrome recusa. E um certificado folha sem ponto de revogação (CRL ou OCSP) é aceito pelo Chrome mas recusado pelo Schannel do Windows (PowerShell, .NET, <code>curl.exe</code>) com <em>revocation status is unknown</em>.</p>
+</article>
+
+<article class="e" id="aia" data-s="seg">
+  <h3><a class="self" href="#aia">AIA</a> <span class="t">conc.</span></h3>
+  <p><em>Authority Information Access</em>: um campo dentro do certificado que diz <strong>onde baixar</strong> o certificado de quem o emitiu. É o que permite ao navegador completar uma <a class="x" href="#cadeia">cadeia</a> que o servidor mandou incompleta — Chrome, Edge e Windows fazem essa busca; OpenSSL, Node e Go não.</p>
+  <p>Efeito colateral: um site mal configurado “funciona no navegador” e falha na automação, e a culpa parece ser do seu código. A saída é embarcar as intermediárias que faltam no <code>ca</code> da conexão.</p>
+</article>
+
+<article class="e" id="pem-pfx" data-s="seg">
+  <h3><a class="self" href="#pem-pfx">PEM e PFX</a> <span class="t">form.</span></h3>
+  <p>Dois jeitos de guardar a mesma coisa — chave e certificado — em arquivo.</p>
+  <p><strong>PEM</strong> é texto: blocos <code>-----BEGIN CERTIFICATE-----</code> em base64, um item por bloco, sem senha por padrão. É o que <a class="x" href="#openssl">openssl</a>, Node e Go leem sem esforço.</p>
+  <p><strong>PFX</strong> (ou <code>.p12</code>, formato PKCS#12) é binário: chave, certificado e cadeia num pacote só, cifrado com senha. É como o <a class="x" href="#certificado">certificado A1</a> é entregue no Brasil. Os antigos, exportados de Windows velho, usam RC2-40 e 3DES, que o OpenSSL 3 recusa por padrão (<em>Unsupported PKCS12 PFX data</em>) — no Node, <code>--openssl-legacy-provider</code> resolve. Por isso um sistema que recebe <code>.pfx</code> costuma abri-lo uma vez e guardar em PEM cifrado com chave própria: o resto do sistema nunca mais lida com o formato.</p>
+</article>
+
+<article class="e" id="tls-bridging" data-s="seg">
+  <h3><a class="self" href="#tls-bridging">TLS bridging</a> <span class="t">conc.</span></h3>
+  <p>Um <a class="x" href="#proxy">proxy</a> que <strong>termina</strong> o <a class="x" href="#tls">TLS</a> do cliente com um certificado próprio e abre <strong>outro</strong> TLS com o destino — duas conexões cifradas com o proxy no meio, copiando bytes de uma para a outra. É o mecanismo de todo antivírus e firewall corporativo que “inspeciona HTTPS”, e também o de um serviço que apresenta um certificado de cliente (<a class="x" href="#mtls">mTLS</a>) em nome de quem não o tem.</p>
+  <p>Exige duas coisas: uma <a class="x" href="#ca">CA interna</a> instalada no cliente, e os dois lados falando a mesma versão de HTTP — o proxy copia bytes, então se o navegador negociar HTTP/2 e o destino HTTP/1.1, nada funciona; prende-se o ALPN em <code>http/1.1</code> dos dois lados. Do lado do cliente, o cadeado mostra a CA interna, não o site: é o sinal de que o proxy está no caminho.</p>
 </article>
 </section>
 

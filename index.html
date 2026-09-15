@@ -816,12 +816,31 @@ export { minhaFuncao };</code></pre>
 
 <article class="e" id="postgres" data-s="dados">
   <h3><a class="self" href="#postgres">Postgres</a> <span class="t">ferr.</span></h3>
-  <p>PostgreSQL: banco relacional open-source, e o que está embaixo do <a class="x" href="#supabase">Supabase</a>. Tudo o que o Supabase faz — políticas de acesso, migrations, funções, gatilhos — é Postgres puro com uma camada de conveniência por cima, escrito em <a class="x" href="#sql">SQL</a>.</p>
+  <p>Banco de dados relacional open-source, e o que está embaixo do <a class="x" href="#supabase">Supabase</a>. Guarda tabelas, executa <a class="x" href="#sql">SQL</a>, garante transações e aplica as regras de integridade e de acesso. É um processo que escuta na porta 5432 e fala um protocolo binário próprio — <strong>não</strong> <a class="x" href="#http">HTTP</a>.</p>
+  <p>Tudo o que o Supabase faz — políticas de acesso, <a class="x" href="#ddl">migrations</a>, funções, gatilhos — é Postgres puro com uma camada de conveniência por cima.</p>
+  <p><strong>A grafia:</strong> é <code>PostgreSQL</code>, com <em>“gre”</em>. Não <code>PostgresSQL</code> nem <code>PostsSQL</code>. O banco se chamava POSTGRES (de <em>post-Ingres</em>, o sucessor de um banco chamado Ingres, em Berkeley, nos anos 1980) e, ao ganhar SQL em 1996, virou PostgreSQL — o “SQL” <strong>substituiu</strong> as últimas letras de “Postgres” em vez de se somar a elas. <strong>Postgres</strong> é o apelido corrente e significa exatamente a mesma coisa.</p>
+  <p class="note">Não confundir com <a class="x" href="#postgrest">PostgREST</a>, que é outro programa, de outro autor, e cujo nome difere por duas letras.</p>
 </article>
 
 <article class="e" id="supabase" data-s="dados">
   <h3><a class="self" href="#supabase">Supabase</a> <span class="t">serv.</span></h3>
   <p>Plataforma que entrega um <a class="x" href="#postgres">Postgres</a> gerenciado mais o que costuma vir junto: autenticação, <a class="x" href="#api">API</a> automática (<a class="x" href="#postgrest">PostgREST</a>), armazenamento de arquivos, tempo real por <a class="x" href="#websocket">WebSocket</a> e funções. O ponto é não ser uma caixa-preta: por baixo é Postgres, e você pode descer até o <a class="x" href="#sql">SQL</a>.</p>
+</article>
+
+<article class="e" id="ddl" data-s="dados">
+  <h3><a class="self" href="#ddl">DDL (e DML, DCL, TCL)</a> <span class="t">conc.</span></h3>
+  <p><em>Data Definition Language</em>: a fatia do <a class="x" href="#sql">SQL</a> que mexe na <strong>estrutura</strong> do banco, não nos dados. O SQL se divide em quatro famílias, e as siglas aparecem em documentação o tempo todo:</p>
+  <ul>
+    <li><strong>DDL</strong> — define a estrutura: <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code></li>
+    <li><strong>DML</strong> — mexe nos dados: <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> (e <code>SELECT</code>, que alguns separam como DQL)</li>
+    <li><strong>DCL</strong> — controla o acesso: <code>GRANT</code>, <code>REVOKE</code></li>
+    <li><strong>TCL</strong> — controla a transação: <code>BEGIN</code>, <code>COMMIT</code>, <code>ROLLBACK</code></li>
+  </ul>
+  <p>A divisão parece escolástica e tem três consequências concretas.</p>
+  <p><strong>1.</strong> Uma <strong>migration</strong> é exatamente isso: uma sequência de comandos DDL, versionada. Por isso é perigosa de um jeito próprio — <code>DROP COLUMN</code> não tem desfazer, enquanto um <code>DELETE</code> errado ainda tem backup da linha.</p>
+  <p><strong>2. No Postgres, DDL é transacional</strong> — e isso é raro. Dá para envolver <code>CREATE TABLE</code>, <code>ALTER TABLE</code> e <code>CREATE INDEX</code> num <code>BEGIN … COMMIT</code> e, se o último passo falhar, <strong>tudo volta atrás</strong>. No MySQL cada DDL <a class="x" href="#commit">confirma</a> sozinho, e uma migration que quebra no meio deixa o banco num estado híbrido para consertar à mão. É das razões técnicas mais fortes para preferir <a class="x" href="#postgres">Postgres</a>.</p>
+  <p><strong>3.</strong> É o gancho de um <em>event trigger</em>. <code>on ddl_command_end</code> dispara ao fim de qualquer comando DDL, o que permite reagir a um <code>CREATE FUNCTION</code> que ninguém previu — inclusive escrito por outra sessão, meses depois.</p>
+  <p class="note">E a separação entre as famílias é o que torna esse problema possível: <code>CREATE FUNCTION</code> é <strong>DDL</strong>, mas a concessão que abre a função nova a um papel público é <strong>DCL</strong> — e vem de configuração padrão, sem comando nenhum. Não há DCL para interceptar; o gatilho precisa se pendurar no DDL e <strong>desfazer</strong> o que veio de brinde.</p>
 </article>
 
 <article class="e" id="crud" data-s="dados">
@@ -917,7 +936,16 @@ POST   /receitas       → cria</code></pre>
 
 <article class="e" id="postgrest" data-s="rede">
   <h3><a class="self" href="#postgrest">PostgREST</a> <span class="t">ferr.</span></h3>
-  <p>Expõe as tabelas de um <a class="x" href="#postgres">Postgres</a> como <a class="x" href="#rest">API REST</a> automaticamente. É o que está por baixo do cliente do <a class="x" href="#supabase">Supabase</a> — e a origem de detalhes como o limite padrão de linhas por resposta, que surpreende quem espera receber tudo.</p>
+  <p>Um programa separado — de outro autor, escrito em Haskell — que fica na frente de um banco <a class="x" href="#postgres">Postgres</a> e o expõe como <a class="x" href="#rest">API REST</a>. O nome é trocadilho: <strong>Postg</strong>res + <strong>REST</strong>.</p>
+  <pre><code>navegador ──HTTP/JSON──&gt; PostgREST ──SQL──&gt; PostgreSQL</code></pre>
+  <p><strong>Você não escreve nenhum endpoint.</strong> Ele lê o esquema do banco — tabelas, colunas, tipos, chaves estrangeiras, funções — e gera a API sozinho. Criou uma tabela? Existe a rota, com filtro, ordenação, paginação e relacionamentos, sem uma linha de código de servidor. Criou uma coluna? Aparece no mesmo instante — não há camada intermediária para atualizar, e por isso ela não tem como sair de sincronia.</p>
+  <pre><code>GET /receitas?tempo=lt.30&amp;select=nome&amp;order=nome
+    ↓
+select nome from receitas where tempo &lt; 30 order by nome;</code></pre>
+  <p>É o que está por baixo do cliente do <a class="x" href="#supabase">Supabase</a>: <code>supabase.from('x').select()</code> <strong>não fala com o banco</strong> — monta uma URL e chama <code>/rest/v1/…</code>, visível no painel de rede do navegador.</p>
+  <p><strong>Como a autorização funciona</strong>, que é a peça engenhosa: o PostgREST conecta com um papel <em>authenticator</em> que sozinho quase nada pode. A cada requisição ele lê o <a class="x" href="#jwt">JWT</a>, extrai o papel (<code>anon</code> sem login, <code>authenticated</code> com) e o ID do usuário, executa <code>SET LOCAL ROLE</code> e publica o ID em variáveis de sessão — só então roda o SQL. É daí que <code>auth.uid()</code> tira o valor dentro de uma política.</p>
+  <p><strong>A autorização acontece dentro do Postgres, não aqui.</strong> O PostgREST só entrega ao banco a identidade de quem pergunta. Três consequências: tabela sem RLS habilitada fica aberta, porque não há camada de servidor para barrar; <code>revoke … from public</code> não fecha nada, porque <code>anon</code> é concessão à parte; e um <code>grant execute</code> a <code>anon</code> expõe a função à internet mesmo que nenhuma tela a chame.</p>
+  <p class="note">Duas pegadinhas do dia a dia. <strong>O limite de linhas</strong> — o Supabase configura um teto por resposta, e ele não avisa nem dá erro: devolve o teto, e quem esperava mais conclui que o banco tem menos. Só aparece quando o dado cresce. E <strong>os erros vêm do Postgres</strong>, atravessando o PostgREST: depurar API do Supabase é depurar <a class="x" href="#sql">SQL</a> e RLS, não a camada HTTP.</p>
 </article>
 
 <article class="e" id="graphql" data-s="rede">
@@ -1043,6 +1071,16 @@ POST   /receitas       → cria</code></pre>
     <p>Em cima do anterior: acerta a versão do protocolo e o algoritmo de criptografia, verifica o certificado do servidor (e, em <a class="x" href="#mtls">mTLS</a>, o do cliente) e estabelece a chave da sessão. Ver <a class="x" href="#tls">TLS</a>.</p>
   </div>
   <p>Distinguir os dois é diagnóstico puro: <em>connection refused</em> é o primeiro; erro de certificado é o segundo — e ambos acontecem antes de existir requisição <a class="x" href="#http">HTTP</a>. É também a etapa que custa tempo, e o motivo de reaproveitar conexões importar.</p>
+</article>
+
+<article class="e" id="jwt" data-s="seg">
+  <h3><a class="self" href="#jwt">JWT</a> <span class="t">pad.</span></h3>
+  <p><em>JSON Web Token</em> (fala-se “djót”): um <a class="x" href="#token">token</a> de acesso que <strong>carrega dentro de si</strong> quem é o portador, em vez de ser um código que o servidor precisa consultar num banco. São três partes separadas por ponto — cabeçalho, dados e assinatura — em <a class="x" href="#json">JSON</a> codificado:</p>
+  <pre><code>eyJhbGciOi…  .  eyJzdWIiOiIxMjMiLCJyb2xlIjoiYXV0aGVudGljYXRlZCJ9  .  SflKxwRJ…
+  cabeçalho             dados (sub, role, exp…)                    assinatura</code></pre>
+  <p><strong>A assinatura é o mecanismo inteiro.</strong> Quem tem a chave secreta consegue verificar, em memória e sem consultar nada, que aquele conteúdo não foi alterado. É isso que permite ao <a class="x" href="#postgrest">PostgREST</a> saber quem está perguntando sem ida ao banco, e é o que torna o modelo <a class="x" href="#stateless">stateless</a>.</p>
+  <p><strong>O que quase todo mundo erra:</strong> os dados <strong>não são secretos</strong>. Estão apenas codificados em base64, não criptografados — qualquer pessoa cola o token num site e lê o conteúdo. A assinatura garante que ninguém <em>alterou</em>, não que ninguém <em>leu</em>. Nunca ponha em JWT nada que não possa ser lido pelo portador.</p>
+  <p><strong>A contrapartida do stateless:</strong> um JWT válido não pode ser cancelado, porque ninguém o consulta em lugar nenhum. Daí a validade curta (minutos ou uma hora) somada a um <em>refresh token</em>, este sim guardado e revogável. Logout não invalida o JWT que já saiu — ele apenas expira.</p>
 </article>
 
 <article class="e" id="token" data-s="seg">

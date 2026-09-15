@@ -948,6 +948,24 @@ select nome from receitas where tempo &lt; 30 order by nome;</code></pre>
   <p class="note">Duas pegadinhas do dia a dia. <strong>O limite de linhas</strong> — o Supabase configura um teto por resposta, e ele não avisa nem dá erro: devolve o teto, e quem esperava mais conclui que o banco tem menos. Só aparece quando o dado cresce. E <strong>os erros vêm do Postgres</strong>, atravessando o PostgREST: depurar API do Supabase é depurar <a class="x" href="#sql">SQL</a> e RLS, não a camada HTTP.</p>
 </article>
 
+<article class="e" id="rpc" data-s="rede">
+  <h3><a class="self" href="#rpc">RPC</a> <span class="t">conc.</span></h3>
+  <p><em>Remote Procedure Call</em>: fazer uma chamada a outra máquina <strong>parecer uma chamada de função local</strong>. Você chama pelo nome, passa argumentos, recebe um retorno — e o fato de aquilo ter atravessado a rede fica escondido.</p>
+  <p><strong>O contraste com <a class="x" href="#rest">REST</a> é o que esclarece</strong>, porque são duas maneiras de pensar uma <a class="x" href="#api">API</a>:</p>
+  <ul>
+    <li><strong>REST</strong> — a URL nomeia uma <em>coisa</em>, e o verbo <a class="x" href="#http">HTTP</a> diz o que fazer: <code>DELETE /receitas/482</code>.</li>
+    <li><strong>RPC</strong> — o endpoint nomeia uma <em>ação</em>: <code>POST /apagarReceita</code> com <code>{id: 482}</code>.</li>
+  </ul>
+  <p>Nenhum é melhor em geral; cada um cabe num tipo de problema. REST é excelente quando a API é <a class="x" href="#crud">CRUD</a> sobre recursos. RPC é melhor quando a operação <strong>não é</strong> CRUD e não corresponde a recurso nenhum — “recalcular o rateio do mês”, “enviar o convite”, “gerar o PDF”. Forçar isso em REST produz substantivos inventados para descrever verbos. Quase toda API real é híbrida.</p>
+  <p><strong>Onde aparece sem o nome:</strong> o <code>rpc()</code> do <a class="x" href="#supabase">Supabase</a> chama uma função do <a class="x" href="#postgres">Postgres</a> — é RPC dentro de uma API REST, e o <a class="x" href="#postgrest">PostgREST</a> reserva o caminho <code>/rpc/</code> exatamente como válvula de escape para o que não é recurso.</p>
+  <pre><code>supabase.rpc('calcular_rateio', { mes: '2026-09' })
+    ↓
+POST /rest/v1/rpc/calcular_rateio</code></pre>
+  <p>Consequência de segurança: <strong>a função é um endpoint público</strong> se estiver concedida a um papel público — daí o peso de um <code>grant execute</code> a <code>anon</code>. E a chamada casa por <strong>nome e parâmetros</strong>: errar um nome de parâmetro devolve “função não existe”, não “parâmetro errado”, porque assinatura diferente é outra função.</p>
+  <p><strong>A família:</strong> <a class="x" href="#graphql">gRPC</a> (binário, com contrato em <code>.proto</code>), tRPC (tipos compartilhados em <a class="x" href="#typescript">TypeScript</a>), e os antecessores SOAP e XML-RPC, verbosos e em XML — SOAP ainda aparece em sistema público brasileiro.</p>
+  <p class="note"><strong>A abstração é deliberadamente vazada</strong>, e a crítica clássica é de 1994 (<em>A Note on Distributed Computing</em>): fazer o remoto parecer local esconde justamente o que não se pode esquecer. Função local não tem <a class="x" href="#latencia">latência</a>, não falha por rede, e ou executa ou não executa. Chamada remota pode demorar, pode falhar <em>depois</em> de já ter executado do outro lado — e então repetir não é seguro — e pode nunca responder. Quem trata RPC como função comum esquece timeout, repetição e idempotência, e descobre em produção.</p>
+</article>
+
 <article class="e" id="graphql" data-s="rede">
   <h3><a class="self" href="#graphql">GraphQL / gRPC</a> <span class="t">pad.</span></h3>
   <p>Alternativas ao <a class="x" href="#rest">REST</a>. <strong>GraphQL</strong>: o cliente pede exatamente os campos que quer, numa URL só — resolve o excesso e a falta de dados de APIs REST, ao custo de complexidade no servidor. <strong>gRPC</strong>: binário e rápido, para serviço falando com serviço. <strong>tRPC</strong>: tipos compartilhados entre front e back em <a class="x" href="#typescript">TypeScript</a>.</p>

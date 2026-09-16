@@ -732,6 +732,46 @@ export { minhaFuncao };</code></pre>
   <p class="note"><strong>TTFB é o piso:</strong> nada aparece antes dele, então 1,5 s condena o LCP — mas um TTFB ótimo não garante nada. No seu stack: <a class="x" href="#ssg">SSG</a> + CDN dá o melhor possível (arquivo pronto, servido do PoP mais próximo); SSR inclui a consulta ao banco, e é o caminho mais curto entre índice faltando e página lenta; <a class="x" href="#serverless">serverless</a> soma o cold start inteiro, e é por isso que a primeira visita depois de um período parado parece quebrada e a segunda parece rápida.</p>
 </article>
 
+<article class="e" id="core-web-vitals" data-s="infra">
+  <h3><a class="self" href="#core-web-vitals">Core Web Vitals</a> <span class="t">pad.</span></h3>
+  <p>O conjunto de três métricas que o Google elegeu como medida de experiência e usa como <strong>sinal de ranqueamento</strong>: <a class="x" href="#lcp">LCP</a>, <a class="x" href="#inp">INP</a> e <a class="x" href="#cls">CLS</a>. Cada uma cobre uma pergunta diferente:</p>
+  <ul>
+    <li><strong>LCP</strong> — carregou? (o conteúdo principal ficou visível)</li>
+    <li><strong>INP</strong> — responde? (a interação teve retorno rápido)</li>
+    <li><strong>CLS</strong> — fica quieto? (a página não pula durante o carregamento)</li>
+  </ul>
+  <p><a class="x" href="#ttfb">TTFB</a> e <a class="x" href="#fcp">FCP</a> <strong>não são</strong> Core Web Vitals — são diagnóstico, servem para explicar um LCP ruim. É uma distinção que economiza trabalho: otimizar TTFB num app que já tem TTFB bom não move o ranqueamento.</p>
+  <p><strong>Duas medições, e elas discordam.</strong> <em>Lab</em> é o teste sintético (Lighthouse, PageSpeed) — reprodutível, e não é o que o Google usa. <em>Field</em> é o CrUX, coletado de usuários reais no Chrome, e considera o <strong>percentil 75</strong>: passar significa que 75% das visitas passaram, com aparelho fraco e rede ruim incluídos. Site que vai bem no Lighthouse e mal no relatório do Search Console está batendo nessa diferença.</p>
+  <p class="note">O peso no ranqueamento é real, mas modesto: serve de desempate entre páginas de relevância parecida, não substitui conteúdo. Ver <a class="x" href="#seo">SEO</a>.</p>
+</article>
+
+<article class="e" id="fcp" data-s="infra">
+  <h3><a class="self" href="#fcp">FCP</a> <span class="t">conc.</span></h3>
+  <p><em>First Contentful Paint</em>: quando o <strong>primeiro</strong> conteúdo aparece — qualquer texto, imagem ou desenho, ainda que não seja o que a pessoa veio ver. É o instante em que a tela deixa de estar em branco.</p>
+  <p>Vem depois do <a class="x" href="#ttfb">TTFB</a> e antes do <a class="x" href="#lcp">LCP</a>. Bom até ~1,8 s. Não é <a class="x" href="#core-web-vitals">Core Web Vital</a>: um FCP ótimo com LCP péssimo é comum — a barra de navegação apareceu depressa e o conteúdo demorou.</p>
+</article>
+
+<article class="e" id="lcp" data-s="infra">
+  <h3><a class="self" href="#lcp">LCP</a> <span class="t">conc.</span></h3>
+  <p><em>Largest Contentful Paint</em>: quando o <strong>maior</strong> elemento de conteúdo visível termina de ser desenhado — normalmente a imagem de destaque ou o bloco de texto principal. É a melhor aproximação automática de “a página carregou” do ponto de vista de quem olha.</p>
+  <p><strong>Bom até 2,5 s</strong>; acima de 4 s é ruim. É o <a class="x" href="#core-web-vitals">Core Web Vital</a> mais importante e o mais fácil de piorar sem perceber.</p>
+  <p>As causas mais comuns, em ordem: <a class="x" href="#ttfb">TTFB</a> alto (é o piso — nada aparece antes), imagem grande sem otimizar, fonte que bloqueia o texto, e <a class="x" href="#csr">CSR</a> — porque o conteúdo só existe depois de baixar e executar o <a class="x" href="#bundle">bundle</a> e buscar os dados.</p>
+</article>
+
+<article class="e" id="inp" data-s="infra">
+  <h3><a class="self" href="#inp">INP</a> <span class="t">conc.</span></h3>
+  <p><em>Interaction to Next Paint</em>: quanto tempo a página leva para <strong>mostrar resposta visual</strong> a um clique, toque ou tecla. Mede a interação mais lenta da visita, não a média — o que torna a métrica honesta.</p>
+  <p><strong>Bom até 200 ms</strong>; acima de 500 ms é ruim. Substituiu o FID em 2024, que media só o atraso da <em>primeira</em> interação e por isso quase sempre passava.</p>
+  <p>A causa quase sempre é <a class="x" href="#javascript">JavaScript</a> ocupando a thread principal: um recálculo pesado, uma lista enorme redesenhando, ou o próprio custo de hidratação num app <a class="x" href="#ssr">SSR</a> — a página parece pronta e ainda não responde.</p>
+</article>
+
+<article class="e" id="cls" data-s="infra">
+  <h3><a class="self" href="#cls">CLS</a> <span class="t">conc.</span></h3>
+  <p><em>Cumulative Layout Shift</em>: o quanto a página <strong>pula</strong> enquanto carrega. É a métrica da irritação de clicar num botão e ele se mover no instante do clique. Não é tempo: é uma pontuação, <strong>boa até 0,1</strong> e ruim acima de 0,25.</p>
+  <p>As causas são poucas e todas evitáveis: imagem sem <code>width</code> e <code>height</code> declarados (o navegador não reserva o espaço), banner ou aviso inserido no topo depois, fonte que troca e muda a altura do texto, e conteúdo que chega por <a class="x" href="#api">API</a> e empurra o que já estava na tela.</p>
+  <p class="note">É o mais barato de consertar dos três, e o único que depende quase só de <a class="x" href="#css">CSS</a> disciplinado — reservar espaço antes de saber o que vai ocupá-lo.</p>
+</article>
+
 <article class="e" id="latencia" data-s="infra">
   <h3><a class="self" href="#latencia">Latência</a> <span class="t">conc.</span></h3>
   <p>O tempo que um pedido leva para ir e voltar, independentemente de quanto dado trafega. Não confundir com <strong>banda</strong>, que é quanto cabe por segundo: banda larga com latência alta continua parecendo lenta, porque a espera acontece antes de o primeiro byte chegar.</p>
@@ -1003,6 +1043,22 @@ POST /rest/v1/rpc/calcular_rateio</code></pre>
   </ul>
 </article>
 
+<article class="e" id="dns" data-s="rede">
+  <h3><a class="self" href="#dns">DNS</a> <span class="t">prot.</span></h3>
+  <p><em>Domain Name System</em>: a lista telefônica da internet. Traduz um nome (<code>seusite.com.br</code>) no endereço <strong>IP</strong> da máquina que responde por ele — porque o roteamento funciona por número, não por nome.</p>
+  <p>É a <strong>primeira</strong> etapa de qualquer acesso, e por isso entra inteira no <a class="x" href="#ttfb">TTFB</a>. Costuma ser rápida por causa do cache em várias camadas (navegador, sistema, provedor), e a primeira consulta a um domínio novo é a que custa.</p>
+  <p>Os registros que aparecem na prática: <strong>A</strong> aponta para um IPv4, <strong>AAAA</strong> para IPv6, <strong>CNAME</strong> aponta um nome para outro nome (é como se liga um domínio à <a class="x" href="#vercel">Vercel</a> ou ao <a class="x" href="#github-pages">GitHub Pages</a>), <strong>MX</strong> diz quem recebe e-mail, e <strong>TXT</strong> guarda texto — usado para provar posse do domínio e para SPF e DKIM.</p>
+  <p class="note">Cada registro tem <strong>TTL</strong>, como um <a class="x" href="#cdn">cache</a>. Por isso mudança de DNS não é instantânea: o mundo continua usando o valor antigo até o TTL expirar. Baixar o TTL <em>antes</em> de uma migração é o truque que evita horas de espera — e precisa ser feito com antecedência, porque o TTL antigo ainda vale.</p>
+</article>
+
+<article class="e" id="tcp" data-s="rede">
+  <h3><a class="self" href="#tcp">TCP/IP</a> <span class="t">prot.</span></h3>
+  <p>A base sobre a qual tudo o mais roda. <strong>IP</strong> entrega pacotes de uma máquina a outra, sem garantia: podem sumir, chegar fora de ordem ou duplicados. <strong>TCP</strong> constrói em cima disso uma <em>conexão confiável</em> — numera os pacotes, confirma o recebimento, reenvia o que faltou e entrega tudo na ordem certa.</p>
+  <p><a class="x" href="#http">HTTP</a>, <a class="x" href="#tls">TLS</a>, <a class="x" href="#ssh">SSH</a> e a conexão com o <a class="x" href="#postgres">Postgres</a> são todos TCP por baixo. Um <a class="x" href="#socket">socket</a> é a ponta dessa conexão.</p>
+  <p>A conexão começa pelo <a class="x" href="#handshake">handshake</a> de três passos, que custa uma ida e volta antes de qualquer dado — somada à do TLS, são duas antes do primeiro byte útil. É a razão de reaproveitar conexões importar, e parte do que o <a class="x" href="#ttfb">TTFB</a> mede.</p>
+  <p class="note">O primo é o <strong>UDP</strong>, que só dispara pacotes sem confirmar nada — mais rápido e sem garantia, usado em vídeo ao vivo, jogos e <a class="x" href="#dns">DNS</a>. O HTTP/3 roda sobre QUIC, que é confiabilidade reconstruída em cima de UDP, justamente para eliminar uma das idas e voltas.</p>
+</article>
+
 <article class="e" id="socket" data-s="rede">
   <h3><a class="self" href="#socket">Socket</a> <span class="t">conc.</span></h3>
   <p>A abstração do sistema operacional para uma conexão de rede: um canal por onde entram e saem bytes. Tudo em rede é socket lá no fundo.</p>
@@ -1230,6 +1286,7 @@ POST /rest/v1/rpc/calcular_rateio</code></pre>
   <h3><a class="self" href="#seo">SEO</a> <span class="t">prát.</span></h3>
   <p><em>Search Engine Optimization</em>: fazer o conteúdo ser encontrado em buscadores. Só alcança o que abre <strong>sem login</strong> — página atrás de autenticação não é assunto de SEO.</p>
   <p>A <a class="x" href="#renderizacao">renderização</a> importa, mas não é tudo: <a class="x" href="#csr">CSR</a> não torna o site invisível (o Google executa JavaScript), e sim mais lento para indexar, frágil, com títulos repetidos, e <strong>completamente opaco para os robôs que não executam JS</strong> — WhatsApp e redes sociais entre eles. Ver <a class="x" href="#open-graph">Open Graph</a>.</p>
+  <p>Desempenho entra como sinal de ranqueamento pelos <a class="x" href="#core-web-vitals">Core Web Vitals</a> — e a métrica a olhar é o <a class="x" href="#lcp">LCP</a>, não o <a class="x" href="#ttfb">TTFB</a>. Numa <a class="x" href="#spa">SPA</a> os dois discordam: <strong>TTFB ótimo com LCP ruim é a assinatura do modelo</strong>, não sinal de que está tudo bem.</p>
 </article>
 
 <article class="e" id="robots" data-s="seo">

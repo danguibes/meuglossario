@@ -353,6 +353,19 @@ dist/
   <p>“Leia o arquivo → fique só com as linhas de setembro → conte quantas são.” É a ideia central do <a class="x" href="#shell">shell</a>: ferramentas pequenas, encadeadas.</p>
 </article>
 
+<article class="e" id="heredoc" data-s="cli">
+  <h3><a class="self" href="#heredoc">Heredoc</a> <span class="t">conc.</span></h3>
+  <p><em>Here-document</em>: sintaxe do <a class="x" href="#shell">shell</a> para entregar um texto de <strong>várias linhas</strong> à entrada de um comando, sem criar arquivo temporário. O nome diz que o documento está <em>aqui</em>, no próprio script.</p>
+  <pre><code>git commit -F - &lt;&lt;'MSG'
+Acrescenta RPC
+
+Entra pelo contraste com REST.
+MSG</code></pre>
+  <p><strong>As aspas no delimitador decidem tudo:</strong> <code>&lt;&lt;'EOF'</code> é literal — <code>$HOME</code> continua <code>$HOME</code> e nada executa; <code>&lt;&lt;EOF</code> <strong>expande</strong> variáveis e executa o que estiver entre crases. Aspas em 90% dos casos: mensagem de commit, bloco de <a class="x" href="#sql">SQL</a>, script de outra linguagem.</p>
+  <p>Variantes: <code>&lt;&lt;-EOF</code> remove <strong>tabulações</strong> do início das linhas, para indentar o bloco dentro de um <code>if</code> — só tab, não espaço; e a <em>here-string</em> <code>&lt;&lt;&lt;</code>, de uma linha só.</p>
+  <p class="note"><strong>A armadilha:</strong> o delimitador de fechamento precisa estar <strong>sozinho, no começo da linha</strong> — um espaço antes e o shell nunca acha o fim. O erro não menciona isso: diz <code>unexpected EOF while looking for matching quote</code>, apontando para um lugar sem relação com o problema, porque o shell seguiu lendo e tropeçou na primeira aspa que encontrou. No PowerShell o equivalente é <code>@'…'@</code>, e lá o fechamento precisa estar na coluna zero.</p>
+</article>
+
 <article class="e" id="ls" data-s="cli">
   <h3><a class="self" href="#ls">ls</a> <span class="t">cmd.</span></h3>
   <p>Lista os arquivos da pasta. Em PowerShell, <code>Get-ChildItem</code> — que também atende por <code>ls</code>.</p>

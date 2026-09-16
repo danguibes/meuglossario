@@ -716,6 +716,22 @@ export { minhaFuncao };</code></pre>
   <p class="note"><strong>São três caches independentes</strong>, e confundi-los custa tempo de diagnóstico: o do <strong>navegador</strong> (no disco do usuário; limpa com recarga forçada ou nome de arquivo novo), o da <strong>CDN</strong> (nos PoPs; limpa por TTL ou purge) e a <strong>origem</strong> (limpa no <a class="x" href="#deploy">deploy</a>). Quando o navegador mostra uma versão e o <a class="x" href="#curl">curl</a> mostra outra, no mesmo instante, é quase sempre o primeiro — <code>curl</code> não tem cache, é processo novo a cada execução.</p>
 </article>
 
+<article class="e" id="ttfb" data-s="infra">
+  <h3><a class="self" href="#ttfb">TTFB</a> <span class="t">conc.</span></h3>
+  <p><em>Time To First Byte</em>: o tempo entre o navegador começar a pedir uma página e o <strong>primeiro byte</strong> da resposta chegar. É uma soma de etapas:</p>
+  <pre><code>DNS → handshake TCP → handshake TLS → pedido viaja →
+                          servidor processa → 1º byte volta
+└───────────────────────── TTFB ──────────────────────────┘</code></pre>
+  <p>Fica <strong>de fora</strong>: baixar o resto, parsear o <a class="x" href="#html">HTML</a>, buscar CSS e JS, desenhar. TTFB é só a largada.</p>
+  <p>Duas metades, e diagnosticar é saber qual delas: <strong>rede</strong> (DNS, os dois <a class="x" href="#handshake">handshakes</a>, a viagem — é <a class="x" href="#latencia">latência</a> pura, resolvida com <a class="x" href="#cdn">CDN</a>) e <strong>servidor</strong> (consulta ao banco, renderização, <a class="x" href="#cold-start">cold start</a> — resolvida com código e cache). Otimizar a metade errada não move o número.</p>
+  <p>O <a class="x" href="#curl">curl</a> decompõe, e cada valor é acumulado desde o início:</p>
+  <pre><code>curl -o /dev/null -s -w "dns:  %{time_namelookup}\ntcp:  %{time_connect}\ntls:  %{time_appconnect}\nttfb: %{time_starttransfer}\ntotal:%{time_total}\n" https://seusite.com.br/</code></pre>
+  <p>Se <code>tls</code> já é 0,4 s, o problema é distância. Se <code>tls</code> é 0,05 s e <code>ttfb</code> é 0,9 s, o servidor passou 850 ms pensando. Referências grosseiras: abaixo de 200 ms é bom, acima de 800 ms incomoda.</p>
+  <p><strong>A armadilha: TTFB engana numa <a class="x" href="#spa">SPA</a>.</strong> Um app <a class="x" href="#csr">CSR</a> tem TTFB excelente — o servidor devolve na hora um HTML praticamente vazio —, mas o usuário não vê nada: falta baixar o <a class="x" href="#bundle">bundle</a>, executá-lo, buscar os dados e desenhar. Primeiro byte em 80 ms, primeira palavra legível em 2,5 s. Já um app <a class="x" href="#ssr">SSR</a> tem TTFB <em>pior</em> — consultou o banco antes de responder — e mostra conteúdo <em>antes</em>. <strong>Entre CSR e SSR, o TTFB anda na direção oposta da experiência</strong>, e comparar os dois por ele leva à conclusão errada.</p>
+  <p>Daí as métricas de referência serem outras: <strong>FCP</strong> (primeiro pixel de conteúdo), <strong>LCP</strong> (o elemento principal ficar visível), <strong>INP</strong> (resposta à primeira interação) e <strong>CLS</strong> (o quanto a página pula enquanto carrega). LCP, INP e CLS são os <em>Core Web Vitals</em>, sinal de ranqueamento do Google; <strong>TTFB não é um deles</strong> — é diagnóstico, serve para explicar um LCP ruim, não para substituí-lo.</p>
+  <p class="note"><strong>TTFB é o piso:</strong> nada aparece antes dele, então 1,5 s condena o LCP — mas um TTFB ótimo não garante nada. No seu stack: <a class="x" href="#ssg">SSG</a> + CDN dá o melhor possível (arquivo pronto, servido do PoP mais próximo); SSR inclui a consulta ao banco, e é o caminho mais curto entre índice faltando e página lenta; <a class="x" href="#serverless">serverless</a> soma o cold start inteiro, e é por isso que a primeira visita depois de um período parado parece quebrada e a segunda parece rápida.</p>
+</article>
+
 <article class="e" id="latencia" data-s="infra">
   <h3><a class="self" href="#latencia">Latência</a> <span class="t">conc.</span></h3>
   <p>O tempo que um pedido leva para ir e voltar, independentemente de quanto dado trafega. Não confundir com <strong>banda</strong>, que é quanto cabe por segundo: banda larga com latência alta continua parecendo lenta, porque a espera acontece antes de o primeiro byte chegar.</p>

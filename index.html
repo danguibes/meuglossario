@@ -1274,6 +1274,15 @@ POST /rest/v1/rpc/calcular_rateio</code></pre>
   <p>Rodar “a seco”: o programa executa e <strong>diz o que faria</strong>, sem fazer. <code>rsync --dry-run</code>, <code>terraform plan</code>, <code>npm publish --dry-run</code>. É a defesa padrão antes de qualquer operação destrutiva ou em massa.</p>
 </article>
 
+<article class="e" id="harness" data-s="qual">
+  <h3><a class="self" href="#harness">Harness</a> <span class="t">conc.</span></h3>
+  <p>Literalmente <em>arreio</em>, a correia que liga o cavalo à carroça — e a metáfora é precisa: <strong>o arreio não puxa nada</strong>; conecta, direciona e limita a força de quem puxa. Em software, é o andaime que <strong>envolve</strong> um código para executá-lo em condições controladas, sem fazer parte dele.</p>
+  <p><strong>O uso clássico é o <em>test harness</em>:</strong> prepara o estado inicial (as <em>fixtures</em>), chama o código sob teste isolando um do outro, coleta o que aconteceu e compara com o esperado, limpa o que criou e relata. Jest, Vitest e pytest são harnesses; um script de conferência escrito à mão também é.</p>
+  <p><strong>O uso que apareceu com IA é o <em>agent harness</em>:</strong> um modelo de linguagem sozinho só produz texto — não lê arquivo, não roda comando, não lembra de ontem. O harness é o programa em volta que monta o contexto, chama o modelo, lê o que ele pediu, verifica permissão, executa a ferramenta e devolve o resultado, em laço. Ferramentas disponíveis, regras de permissão e compactação de contexto são dele, <strong>não do modelo</strong> — o que importa ao diagnosticar: um limite do harness se resolve por outro caminho, não insistindo no mesmo pedido.</p>
+  <p><strong>Não confundir:</strong> um <strong>framework</strong> chama o <em>seu</em> código (<a class="x" href="#react">React</a>, <a class="x" href="#nextjs">Next</a>) — nele você é o conteúdo; um <strong>runtime</strong> apenas executa (<a class="x" href="#node">Node</a>, o motor do navegador). No harness, seu código é o <em>objeto de estudo</em>. A diferença é a direção do controle.</p>
+  <p class="note">Um harness fraco engana: se a camada de verificação aceita só “falhou”, o teste <strong>passa com qualquer erro</strong> — inclusive um que ninguém previu. Distinguir “falhou como eu esperava” de “falhou de um jeito novo” é trabalho do harness, não do teste. Ver <a class="x" href="#medir">medir antes de afirmar</a>.</p>
+</article>
+
 <article class="e" id="analise-estatica" data-s="qual">
   <h3><a class="self" href="#analise-estatica">Análise estática</a> <span class="t">conc.</span></h3>
   <p>Encontrar problemas <strong>sem executar</strong> o código: <a class="x" href="#lint">lint</a>, <a class="x" href="#prettier">formatter</a> e <a class="x" href="#type-checker">type checker</a>. O complemento é o teste, que só pega o que aparece rodando. As duas coisas não se substituem.</p>

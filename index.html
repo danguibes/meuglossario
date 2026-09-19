@@ -605,6 +605,31 @@ export { minhaFuncao };</code></pre>
   <p>De <em>distribution</em>: a pasta onde o <a class="x" href="#build">build</a> cospe o resultado pronto. Alguns projetos chamam de <code>build/</code>; o <a class="x" href="#nextjs">Next</a> usa <code>.next/</code>. Três regras: <strong>ninguém edita</strong> (é gerada), <strong>não entra no <a class="x" href="#repo">repo</a></strong>, e <strong>é o que vai para a hospedagem</strong>.</p>
 </article>
 
+<article class="e" id="framework" data-s="build">
+  <h3><a class="self" href="#framework">Framework × biblioteca</a> <span class="t">conc.</span></h3>
+  <p>A diferença é a <strong>direção do controle</strong>, e ela decide quanto do desenho do seu projeto já vem decidido.</p>
+  <ul>
+    <li><strong>Biblioteca</strong> — <em>você</em> chama <em>ela</em>, quando quiser. Uma função de formatar data, um cliente de HTTP. Você manda; ela responde.</li>
+    <li><strong>Framework</strong> — <em>ela</em> chama <em>você</em>. Você preenche os lugares que ela reservou, e ela decide quando executá-los. É a <em>inversão de controle</em>: <a class="x" href="#nextjs">Next.js</a> decide quando sua página roda, e você não o chama.</li>
+  </ul>
+  <p>Daí a troca: framework dá muito pronto e cobra que você aceite o formato dele; biblioteca dá pouco e não impõe nada. E daí a dificuldade de trocar de framework depois — a forma do projeto <em>é</em> a do framework.</p>
+  <p class="note">O <a class="x" href="#react">React</a> se chama biblioteca e na prática funciona como framework: ele decide quando seu componente é chamado. A fronteira é menos nítida do que os rótulos sugerem — o que importa é a pergunta “quem chama quem?”. Ver <a class="x" href="#harness">harness</a> e <a class="x" href="#runtime">runtime</a>.</p>
+</article>
+
+<article class="e" id="runtime" data-s="build">
+  <h3><a class="self" href="#runtime">Runtime</a> <span class="t">conc.</span></h3>
+  <p>Duas coisas, e as duas aparecem toda hora.</p>
+  <p><strong>O programa que executa:</strong> <a class="x" href="#node">Node</a>, Deno, Bun, o motor do navegador, a máquina virtual do Java. Só executa — não chama seu código de volta como um <a class="x" href="#framework">framework</a>, nem o observa como um <a class="x" href="#harness">harness</a>. Quando uma plataforma diz “runtime: nodejs20”, é disto que fala.</p>
+  <p><strong>O momento:</strong> <em>em tempo de execução</em>, por oposição a <em>em tempo de compilação</em> ou de <a class="x" href="#build">build</a>. “Erro de runtime” é o que só aparece rodando — e é exatamente o que a <a class="x" href="#analise-estatica">análise estática</a> não pega. Os tipos do <a class="x" href="#typescript">TypeScript</a> somem antes do runtime; por isso dado vindo de uma <a class="x" href="#api">API</a> pode desmentir o tipo declarado sem ninguém avisar.</p>
+</article>
+
+<article class="e" id="fixture" data-s="build">
+  <h3><a class="self" href="#fixture">Fixture</a> <span class="t">conc.</span></h3>
+  <p>O estado de partida que um <a class="x" href="#harness">harness</a> monta antes de rodar um teste: as linhas no banco, o arquivo em disco, a sessão autenticada, o relógio congelado numa data. O nome vem do laboratório — o suporte que segura a peça na posição certa para a medição.</p>
+  <p>A regra que evita a maior parte da dor: <strong>cada teste recebe a sua, e desfaz ao sair.</strong> Fixture compartilhada faz testes passarem na ordem certa e falharem na ordem trocada — um defeito que some quando você vai investigar.</p>
+  <p class="note">No Brasil quase ninguém traduz; se traduzir, é “massa de teste”. Não confundir com <em>mock</em>, que substitui uma dependência por uma falsa: a fixture é o <strong>dado</strong>, o mock é o <strong>vizinho</strong>.</p>
+</article>
+
 <article class="e" id="vite" data-s="build">
   <h3><a class="self" href="#vite">Vite</a> <span class="t">ferr.</span></h3>
   <p>Duas ferramentas num pacote. Em desenvolvimento sobe um servidor local com <a class="x" href="#hmr">HMR</a>; em produção faz o <a class="x" href="#build">build</a> e produz o <a class="x" href="#dist">dist/</a>. Um app Vite + <a class="x" href="#react">React</a> é servido como arquivos estáticos e renderizado no navegador (<a class="x" href="#csr">CSR</a>).</p>

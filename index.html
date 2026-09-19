@@ -335,6 +335,15 @@ dist/
   <p><em>Graphical User Interface</em>: a versão com janelas e botões. O painel de um serviço é GUI; o comando equivalente é <a class="x" href="#cli">CLI</a>. Quase toda ferramenta séria tem as duas, e a CLI costuma receber as novidades primeiro.</p>
 </article>
 
+<article class="e" id="ide" data-s="cli">
+  <h3><a class="self" href="#ide">IDE</a> <span class="t">ferr.</span></h3>
+  <p><em>Integrated Development Environment</em>: um editor de texto <strong>mais as ferramentas em volta</strong>, sabendo umas das outras. Um editor comum abre e salva arquivo; um IDE sabe o que o arquivo <em>significa</em> — completa nomes, pula para onde a função foi definida, acusa erro enquanto você digita, renomeia os 40 usos de uma função (e só os usos, não as ocorrências do mesmo texto), depura parando numa linha, e traz terminal e <a class="x" href="#git">Git</a> embutidos.</p>
+  <p><strong>A fronteira com “editor” deixou de existir</strong>, e o que a dissolveu tem nome: <strong>LSP</strong> (<em>Language Server Protocol</em>, Microsoft, 2016). A inteligência saiu de dentro do editor e virou um programa separado — o <em>language server</em>. O editor pergunta “o que completa aqui?”, “onde isso foi definido?”, e o servidor responde.</p>
+  <pre><code>editor ──LSP──&gt; language server   (tsserver, pyright, rust-analyzer…)</code></pre>
+  <p>Escreve-se o suporte a uma linguagem uma vez, e todo editor ganha — por isso VS Code, Neovim e Zed entendem <a class="x" href="#typescript">TypeScript</a> igualmente bem: é o mesmo <code>tsserver</code> por trás dos três. É a mesma forma do <a class="x" href="#postgrest">PostgREST</a> e do <a class="x" href="#harness">harness</a>: separar quem <em>decide</em> de quem <em>apresenta</em>, com um protocolo entre os dois.</p>
+  <p class="note"><strong>A armadilha:</strong> “no meu editor não dá erro” não prova nada. O IDE roda a <em>sua</em> cópia das ferramentas — o VS Code usa o TypeScript embutido nele, não o do seu <code>package.json</code>, a menos que você mande usar o do workspace; o <a class="x" href="#lint">ESLint</a> dele pode ler outra configuração; e ele tem plugins que o servidor não tem. A verdade é o que o comando diz: <code>npm run build</code>, <code>tsc --noEmit</code>. O editor é conveniência; o <a class="x" href="#shell">terminal</a> é o árbitro.</p>
+</article>
+
 <article class="e" id="shell" data-s="cli">
   <h3><a class="self" href="#shell">Shell</a> <span class="t">ferr.</span></h3>
   <p>O programa que lê o que você digita no terminal e executa. O <strong>terminal</strong> é a janela; o <strong>shell</strong> é quem interpreta lá dentro. <a class="x" href="#bash">Bash</a>, zsh e PowerShell são shells diferentes, com sintaxes diferentes.</p>

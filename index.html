@@ -1369,6 +1369,26 @@ Sitemap: https://exemplo.com.br/sitemap.xml</code></pre>
   <p>Lista das URLs que você quer que sejam indexadas, com data de atualização. Não garante indexação; ajuda o robô a descobrir o que existe, sobretudo em site grande ou com páginas pouco linkadas. Frameworks como o <a class="x" href="#nextjs">Next</a> geram o arquivo a partir das <a class="x" href="#rota">rotas</a>, o que evita que ele envelheça.</p>
 </article>
 
+<article class="e" id="canonical" data-s="seo">
+  <h3><a class="self" href="#canonical">Canonical</a> <span class="t">conc.</span></h3>
+  <p>O endereço que a página declara como <strong>o original</strong> de si mesma. Vem de <em>cânone</em>: a versão oficial, a que vale. Vai no <code>&lt;head&gt;</code>:</p>
+  <pre><code>&lt;link rel="canonical" href="https://www.site.com.br/receitas/risoto"&gt;</code></pre>
+  <p><strong>O problema que resolve:</strong> para você é uma página; para o buscador, cada endereço é uma página diferente. Estes quatro podem mostrar exatamente o mesmo conteúdo:</p>
+  <pre><code>https://www.site.com.br/receitas/risoto
+https://www.site.com.br/receitas/risoto?utm_source=instagram
+https://site.com.br/receitas/risoto
+http://www.site.com.br/receitas/risoto</code></pre>
+  <p>Diante de cópias idênticas sem nenhuma dizendo qual é a original, o Google escolhe sozinho — e avisa no Search Console: <em>“Cópia sem página canônica selecionada pelo usuário”</em>. A tag é a resposta: <em>não importa por onde você chegou, o original é este</em>.</p>
+  <p>Três detalhes que confundem:</p>
+  <ul>
+    <li><strong>É sugestão, não ordem.</strong> O Google costuma aceitar, mas ignora uma canonical que pareça errada — apontando para página de conteúdo bem diferente, por exemplo.</li>
+    <li><strong>Não é redirecionamento.</strong> O redirect (301/308) <em>leva a pessoa</em> para outro endereço; a canonical não leva ninguém a lugar nenhum — a pessoa fica onde está, e só o robô recebe o recado. Por isso o Search Console lista os dois como motivos separados, e <em>“Página com redirecionamento”</em> quase sempre é o redirect funcionando, não defeito.</li>
+    <li><strong>Toda página aponta para si mesma</strong>, com URL absoluta e na forma escolhida (<code>https</code>, com ou sem <code>www</code>). Parece redundante; é o que absorve os <code>?utm=</code> e as variações que você não controla.</li>
+  </ul>
+  <p><strong>A armadilha da <a class="x" href="#spa">SPA</a>:</strong> quando o servidor devolve o mesmo <code>index.html</code> para qualquer caminho, <code>/qualquer-coisa-errada</code> responde 200 com o conteúdo da home — uma fábrica de cópias. Uma canonical fixa apontando para a home resolve isso de graça, <strong>enquanto o app não tiver <a class="x" href="#rota">rotas</a> de conteúdo</strong>. No dia em que existir <code>/receitas/risoto</code>, a mesma linha passa a mentir: toda receita se declara cópia da home e nenhuma é indexada. Aí a canonical tem de ser gerada por rota — e precisa estar no <a class="x" href="#html">HTML</a> servido, pelo mesmo motivo do <a class="x" href="#open-graph">Open Graph</a>.</p>
+  <p class="note">Com o <a class="x" href="#noindex">noindex</a> forma um par que se confunde: <strong>noindex</strong> diz “não liste esta página”; <strong>canonical</strong> diz “liste, mas pelo outro endereço”. Usar os dois na mesma página manda recados contraditórios.</p>
+</article>
+
 <article class="e" id="slug" data-s="seo">
   <h3><a class="self" href="#slug">Slug</a> <span class="t">conc.</span></h3>
   <p>A parte legível da URL que identifica um item:</p>
